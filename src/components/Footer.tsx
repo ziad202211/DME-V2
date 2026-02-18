@@ -4,6 +4,9 @@ import { Phone, Mail, MapPin } from "lucide-react";
 const Footer = () => {
   return (
     <footer className="bg-primary text-primary-foreground">
+      {/* Top accent */}
+      <div className="h-1 w-full bg-gradient-to-r from-secondary/20 via-secondary to-secondary/20" />
+
       <div className="container mx-auto px-6 py-16">
         <div className="grid gap-12 md:grid-cols-3">
           {/* Brand */}
@@ -19,11 +22,21 @@ const Footer = () => {
           <div>
             <h4 className="font-heading text-lg font-bold mb-4 text-secondary">Quick Links</h4>
             <div className="flex flex-col gap-2">
-              <Link to="/" className="text-sm text-primary-foreground/70 hover:text-secondary transition-colors">Home</Link>
-              <Link to="/about" className="text-sm text-primary-foreground/70 hover:text-secondary transition-colors">About</Link>
-              <Link to="/#services" className="text-sm text-primary-foreground/70 hover:text-secondary transition-colors">Services</Link>
-              <Link to="/#projects" className="text-sm text-primary-foreground/70 hover:text-secondary transition-colors">Projects</Link>
-              <Link to="/careers" className="text-sm text-primary-foreground/70 hover:text-secondary transition-colors">Careers</Link>
+              {[
+                { label: "Home", to: "/" },
+                { label: "About", to: "/about" },
+                { label: "Services", to: "/#services" },
+                { label: "Projects", to: "/#projects" },
+                { label: "Careers", to: "/careers" },
+              ].map((link) => (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  className="text-sm text-primary-foreground/70 hover:text-secondary transition-colors hover:translate-x-1 inline-block"
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
 
@@ -32,17 +45,23 @@ const Footer = () => {
             <h4 className="font-heading text-lg font-bold mb-4 text-secondary">Contact</h4>
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
-                <MapPin size={16} className="text-secondary shrink-0" />
+                <div className="flex items-center justify-center rounded-lg bg-secondary/10 p-2">
+                  <MapPin size={14} className="text-secondary shrink-0" />
+                </div>
                 <span className="text-sm text-primary-foreground/70">
                   6000 Brooktree Road, Suite 306, Elkridge, MD 21075
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <Phone size={16} className="text-secondary shrink-0" />
+                <div className="flex items-center justify-center rounded-lg bg-secondary/10 p-2">
+                  <Phone size={14} className="text-secondary shrink-0" />
+                </div>
                 <span className="text-sm text-primary-foreground/70">(443) 583-2455</span>
               </div>
               <div className="flex items-center gap-3">
-                <Mail size={16} className="text-secondary shrink-0" />
+                <div className="flex items-center justify-center rounded-lg bg-secondary/10 p-2">
+                  <Mail size={14} className="text-secondary shrink-0" />
+                </div>
                 <span className="text-sm text-primary-foreground/70">info@dmeconsulting-us.com</span>
               </div>
             </div>

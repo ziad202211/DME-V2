@@ -17,16 +17,18 @@ const CertificationsSection = () => {
           <h2 className="font-heading mt-2 text-4xl font-extrabold text-foreground md:text-5xl">
             Certifications
           </h2>
-          <div className="mx-auto mt-4 h-1 w-20 bg-secondary rounded-full" />
+          <div className="mx-auto mt-4 h-1 w-20 bg-gradient-to-r from-transparent via-secondary to-transparent rounded-full" />
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-6">
+        <div className="flex flex-wrap items-center justify-center gap-5">
           {certifications.map((cert) => (
             <div
               key={cert}
-              className="flex items-center gap-3 rounded-lg border border-border bg-card px-6 py-4 shadow-sm"
+              className="flex items-center gap-3 rounded-xl border border-border bg-card px-6 py-4 shadow-sm transition-all duration-300 hover:shadow-md hover:border-secondary/40 hover:-translate-y-0.5"
             >
-              <Shield size={20} className="text-secondary shrink-0" />
+              <div className="flex items-center justify-center rounded-lg bg-primary p-2">
+                <Shield size={18} className="text-secondary" />
+              </div>
               <span className="text-sm font-semibold text-foreground">{cert}</span>
             </div>
           ))}
