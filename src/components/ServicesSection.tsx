@@ -70,7 +70,7 @@ const ServicesSection = () => {
           <h2 className="font-heading mt-2 text-4xl font-extrabold text-foreground md:text-5xl">
             Our Services
           </h2>
-          <div className="mx-auto mt-4 h-1 w-20 bg-secondary rounded-full" />
+          <div className="mx-auto mt-4 h-1 w-20 bg-gradient-to-r from-transparent via-secondary to-transparent rounded-full" />
         </div>
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -80,19 +80,24 @@ const ServicesSection = () => {
             return (
               <div
                 key={service.title}
-                className="group cursor-pointer rounded-lg border border-border bg-card p-8 shadow-sm transition-all hover:shadow-lg hover:border-secondary/50"
+                className={cn(
+                  "group cursor-pointer rounded-xl border bg-card p-8 transition-all duration-300 hover:-translate-y-1",
+                  isOpen
+                    ? "border-secondary/50 shadow-lg shadow-secondary/10"
+                    : "border-border shadow-sm hover:shadow-lg hover:border-secondary/30"
+                )}
                 onClick={() => setExpanded(isOpen ? null : i)}
               >
-                <div className="mb-4 inline-flex items-center justify-center rounded-lg bg-primary p-3">
-                  <Icon size={28} className="text-secondary" />
+                <div className="mb-5 inline-flex items-center justify-center rounded-xl bg-primary p-3.5 transition-transform duration-300 group-hover:scale-110">
+                  <Icon size={26} className="text-secondary" />
                 </div>
                 <h3 className="font-heading text-xl font-bold text-foreground mb-3">
                   {service.title}
                 </h3>
                 <ul
                   className={cn(
-                    "space-y-1.5 overflow-hidden transition-all duration-300",
-                    isOpen ? "max-h-96 opacity-100" : "max-h-16 opacity-70"
+                    "space-y-2 overflow-hidden transition-all duration-300",
+                    isOpen ? "max-h-96 opacity-100" : "max-h-16 opacity-60"
                   )}
                 >
                   {service.items.map((item) => (
@@ -102,8 +107,8 @@ const ServicesSection = () => {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-3 text-xs font-medium text-secondary">
-                  {isOpen ? "Show less" : "Show more →"}
+                <p className="mt-4 text-xs font-semibold text-secondary tracking-wide">
+                  {isOpen ? "← Show less" : "Show more →"}
                 </p>
               </div>
             );

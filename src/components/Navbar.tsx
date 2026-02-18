@@ -28,11 +28,11 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-md border-b border-primary-foreground/5">
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3 group">
           <div className="flex flex-col">
-            <span className="font-heading text-2xl font-extrabold tracking-tight text-primary-foreground">
+            <span className="font-heading text-2xl font-extrabold tracking-tight text-primary-foreground transition-colors group-hover:text-secondary">
               DM ENTERPRISE
             </span>
             <span className="text-xs font-medium tracking-[0.25em] text-secondary">
@@ -48,7 +48,7 @@ const Navbar = () => {
               <button
                 key={item.label}
                 onClick={() => handleClick(item.path)}
-                className="text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary"
+                className="relative text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:w-0 after:bg-secondary after:transition-all after:duration-300 hover:after:w-full"
               >
                 {item.label}
               </button>
@@ -57,8 +57,8 @@ const Navbar = () => {
                 key={item.label}
                 to={item.path}
                 className={cn(
-                  "text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary",
-                  location.pathname === item.path && "text-secondary"
+                  "relative text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:bg-secondary after:transition-all after:duration-300 hover:after:w-full",
+                  location.pathname === item.path ? "text-secondary after:w-full" : "after:w-0"
                 )}
               >
                 {item.label}

@@ -10,22 +10,29 @@ const HeroSection = () => {
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       {/* Background */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
         style={{ backgroundImage: `url(${heroBg})` }}
       />
-      <div className="absolute inset-0 bg-primary/80" />
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/90 via-primary/75 to-primary/95" />
+
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary to-transparent" />
+      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent" />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 text-center">
-        <p className="mb-4 text-sm font-semibold tracking-[0.3em] text-secondary uppercase">
-          Engineering Excellence Since 2004
-        </p>
+        <div className="inline-block mb-6 rounded-full border border-secondary/30 bg-secondary/10 px-5 py-2">
+          <p className="text-xs font-semibold tracking-[0.3em] text-secondary uppercase">
+            Engineering Excellence Since 2004
+          </p>
+        </div>
         <h1 className="font-heading text-5xl font-black leading-tight text-primary-foreground md:text-7xl lg:text-8xl">
           DM ENTERPRISE
         </h1>
         <p className="mt-2 font-heading text-xl font-medium tracking-[0.4em] text-primary-foreground/80 md:text-2xl">
           CONSULTING
         </p>
+        <div className="mx-auto mt-6 h-1 w-24 bg-gradient-to-r from-transparent via-secondary to-transparent rounded-full" />
         <p className="mx-auto mt-8 max-w-2xl text-lg text-primary-foreground/70 leading-relaxed">
           Professional engineering, IT solutions, and construction management services.
           A certified MBE/DBE/SBE firm dedicated to delivering quality infrastructure projects.
@@ -35,7 +42,7 @@ const HeroSection = () => {
       {/* Scroll indicator */}
       <button
         onClick={scrollToServices}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-secondary"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-secondary transition-opacity hover:opacity-70"
         aria-label="Scroll down"
       >
         <ChevronDown size={36} />

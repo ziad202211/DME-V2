@@ -33,26 +33,35 @@ const ProjectsSection = () => {
           <h2 className="font-heading mt-2 text-4xl font-extrabold text-foreground md:text-5xl">
             Featured Projects
           </h2>
-          <div className="mx-auto mt-4 h-1 w-20 bg-secondary rounded-full" />
+          <div className="mx-auto mt-4 h-1 w-20 bg-gradient-to-r from-transparent via-secondary to-transparent rounded-full" />
         </div>
 
         <div className="grid gap-8 sm:grid-cols-2">
-          {projects.map((project) => (
+          {projects.map((project, i) => (
             <Link
               key={project.slug}
               to={`/projects/${project.slug}`}
-              className="group relative overflow-hidden rounded-lg border border-border bg-primary p-10 transition-all hover:shadow-xl"
+              className="group relative overflow-hidden rounded-xl border border-border bg-primary p-10 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
             >
-              <div className="absolute top-0 left-0 h-1 w-full bg-secondary" />
-              <h3 className="font-heading text-xl font-bold text-primary-foreground mb-3">
-                {project.title}
-              </h3>
-              <p className="text-sm text-primary-foreground/60 mb-6 leading-relaxed">
-                {project.description}
-              </p>
-              <span className="inline-flex items-center gap-2 text-sm font-semibold text-secondary transition-all group-hover:gap-3">
-                View Details <ArrowRight size={16} />
-              </span>
+              {/* Top accent bar */}
+              <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-secondary via-secondary/80 to-secondary/40" />
+              {/* Hover glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+              <div className="relative">
+                <span className="mb-3 inline-block rounded-full bg-secondary/10 px-3 py-1 text-xs font-semibold text-secondary tracking-wide">
+                  0{i + 1}
+                </span>
+                <h3 className="font-heading text-xl font-bold text-primary-foreground mb-3">
+                  {project.title}
+                </h3>
+                <p className="text-sm text-primary-foreground/60 mb-6 leading-relaxed">
+                  {project.description}
+                </p>
+                <span className="inline-flex items-center gap-2 text-sm font-semibold text-secondary transition-all group-hover:gap-3">
+                  View Details <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
+              </div>
             </Link>
           ))}
         </div>
