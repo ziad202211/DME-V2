@@ -105,17 +105,17 @@ const ServicesSection = () => {
   const [hoveredService, setHoveredService] = useState<number | null>(null);
 
   return (
-    <section id="services" className="bg-slate-50 py-24">
-      <div className="container mx-auto px-6">
-        <div className="mb-16 text-center">
-          <p className="text-sm font-semibold tracking-[0.2em] text-slate-600 uppercase">What We Do</p>
-          <h2 className="font-heading mt-2 text-4xl font-extrabold text-slate-900 md:text-5xl">
+    <section id="services" className="bg-slate-50 py-16 sm:py-20 lg:py-24">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="mb-12 sm:mb-16 text-center">
+          <p className="text-xs sm:text-sm font-semibold tracking-[0.15em] sm:tracking-[0.2em] text-slate-600 uppercase">What We Do</p>
+          <h2 className="font-heading mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900">
             Our Services
           </h2>
-          <div className="mx-auto mt-4 h-1 w-20 bg-gradient-to-r from-transparent via-slate-400 to-transparent rounded-full" />
+          <div className="mx-auto mt-3 sm:mt-4 h-1 w-16 sm:w-20 bg-gradient-to-r from-transparent via-slate-400 to-transparent rounded-full" />
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
           {services.map((service, index) => {
             const Icon = service.icon;
             const isHovered = hoveredService === index;
@@ -140,28 +140,28 @@ const ServicesSection = () => {
                 />
                 
                 {/* Content */}
-                <div className="relative z-10 flex h-full min-h-[400px]">
+                <div className="relative z-10 flex h-full min-h-[300px] sm:min-h-[350px] md:min-h-[400px]">
                   {/* Left Side - Title and Icon */}
-                  <div className="flex w-1/2 flex-col justify-center p-8">
-                    <div className="mb-6 flex items-center gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
-                        <Icon size={24} className="text-white" />
+                  <div className="flex w-full sm:w-1/2 flex-col justify-center p-4 sm:p-6 lg:p-8">
+                    <div className="mb-4 sm:mb-6 flex items-center gap-3 sm:gap-4">
+                      <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
+                        <Icon size={20} className="text-white" />
                       </div>
                     </div>
-                    <h3 className="font-heading text-xl font-bold text-white tracking-wide mb-3">
+                    <h3 className="font-heading text-lg sm:text-xl font-bold text-white tracking-wide mb-2 sm:mb-3">
                       {service.title}
                     </h3>
-                    <div className="h-0.5 w-16 bg-white/60 rounded-full" />
+                    <div className="h-0.5 w-12 sm:w-16 bg-white/60 rounded-full" />
                   </div>
 
                   {/* Right Side - Services List */}
-                  <div className="flex w-1/2 flex-col justify-center p-8">
-                    <div className="grid gap-2">
+                  <div className="flex w-full sm:w-1/2 flex-col justify-center p-4 sm:p-6 lg:p-8">
+                    <div className="grid gap-1.5 sm:gap-2">
                       {service.items.map((item, itemIndex) => (
                         <div
                           key={item.name}
                           className={cn(
-                            "flex items-center gap-2 rounded-md px-3 py-2 transition-all duration-200 text-sm",
+                            "flex items-center gap-2 rounded-md px-2 sm:px-3 py-1.5 sm:py-2 transition-all duration-200 text-xs sm:text-sm",
                             item.highlighted
                               ? "bg-yellow-400 text-slate-900 font-semibold"
                               : "text-white/90",
@@ -176,7 +176,7 @@ const ServicesSection = () => {
                           ) : (
                             <ChevronRight className="h-3 w-3 flex-shrink-0 text-white/60" />
                           )}
-                          <span className="leading-tight">{item.name}</span>
+                          <span className="leading-tight text-xs sm:text-sm">{item.name}</span>
                         </div>
                       ))}
                     </div>
@@ -188,13 +188,13 @@ const ServicesSection = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <p className="text-lg text-slate-600 mb-6">
+        <div className="mt-12 sm:mt-16 text-center">
+          <p className="text-base sm:text-lg text-slate-600 mb-4 sm:mb-6">
             Need a custom solution? We've got you covered.
           </p>
-          <button className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-8 py-3 font-semibold text-white transition-all duration-300 hover:bg-slate-800 hover:shadow-lg">
+          <button className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-6 sm:px-8 py-2.5 sm:py-3 font-semibold text-white transition-all duration-300 hover:bg-slate-800 hover:shadow-lg text-sm sm:text-base">
             Discuss Your Project
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
         </div>
       </div>

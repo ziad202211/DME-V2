@@ -35,26 +35,26 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-md border-b border-primary-foreground/5">
-      <div className="container mx-auto flex items-center justify-between px-6 py-4">
-        <Link to="/" className="flex items-center gap-3 group">
+      <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
+        <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
           <div className="flex flex-col">
-            <span className="font-heading text-2xl font-extrabold tracking-tight text-primary-foreground transition-colors group-hover:text-secondary">
+            <span className="font-heading text-xl sm:text-2xl font-extrabold tracking-tight text-primary-foreground transition-colors group-hover:text-secondary">
               DM ENTERPRISE
             </span>
-            <span className="text-xs font-medium tracking-[0.25em] text-secondary">
+            <span className="text-xs font-medium tracking-[0.15em] sm:tracking-[0.25em] text-secondary">
               CONSULTING
             </span>
           </div>
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-4 lg:gap-8 md:flex">
           {navItems.map((item) =>
             item.path.startsWith("/#") ? (
               <button
                 key={item.label}
                 onClick={() => handleClick(item.path)}
-                className="relative text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:w-0 after:bg-secondary after:transition-all after:duration-300 hover:after:w-full"
+                className="relative text-xs lg:text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:w-0 after:bg-secondary after:transition-all after:duration-300 hover:after:w-full"
               >
                 {item.label}
               </button>
@@ -63,7 +63,7 @@ const Navbar = () => {
                 key={item.label}
                 to={item.path}
                 className={cn(
-                  "relative text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:bg-secondary after:transition-all after:duration-300 hover:after:w-full",
+                  "relative text-xs lg:text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:bg-secondary after:transition-all after:duration-300 hover:after:w-full",
                   location.pathname === item.path ? "text-secondary after:w-full" : "after:w-0"
                 )}
               >
@@ -74,9 +74,9 @@ const Navbar = () => {
           
           {/* More dropdown menu */}
           <DropdownMenu>
-            <DropdownMenuTrigger className="relative text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:w-0 after:bg-secondary after:transition-all after:duration-300 hover:after:w-full flex items-center gap-1 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">
+            <DropdownMenuTrigger className="relative text-xs lg:text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:w-0 after:bg-secondary after:transition-all after:duration-300 hover:after:w-full flex items-center gap-1 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">
               MORE
-              <ChevronDown className="h-4 w-4" />
+              <ChevronDown className="h-3 w-3 lg:h-4 lg:w-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-primary border-primary-foreground/20 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">
               <DropdownMenuItem className="text-primary-foreground/80 hover:text-secondary hover:bg-primary-foreground/10 cursor-pointer">
@@ -100,24 +100,24 @@ const Navbar = () => {
 
         {/* Mobile toggle */}
         <button
-          className="text-primary-foreground md:hidden"
+          className="text-primary-foreground md:hidden p-1"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
-          {open ? <X size={28} /> : <Menu size={28} />}
+          {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       {/* Mobile nav */}
       {open && (
         <div className="border-t border-primary-foreground/10 bg-primary md:hidden">
-          <div className="flex flex-col px-6 py-4 gap-4">
+          <div className="flex flex-col px-4 sm:px-6 py-4 gap-3 sm:gap-4">
             {navItems.map((item) =>
               item.path.startsWith("/#") ? (
                 <button
                   key={item.label}
                   onClick={() => handleClick(item.path)}
-                  className="text-left text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary"
+                  className="text-left text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary py-1"
                 >
                   {item.label}
                 </button>
@@ -127,7 +127,7 @@ const Navbar = () => {
                   to={item.path}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary",
+                    "text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary py-1",
                     location.pathname === item.path && "text-secondary"
                   )}
                 >
@@ -137,7 +137,7 @@ const Navbar = () => {
             )}
             
             {/* Mobile More menu items */}
-            <div className="border-t border-primary-foreground/10 pt-4">
+            <div className="border-t border-primary-foreground/10 pt-3 sm:pt-4">
               <div className="text-sm font-semibold tracking-wider text-primary-foreground/60 mb-2">MORE</div>
               <Link
                 to="/contact"
