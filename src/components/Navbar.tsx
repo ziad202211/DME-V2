@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navItems = [
   { label: "HOME", path: "/" },
@@ -65,6 +71,31 @@ const Navbar = () => {
               </Link>
             )
           )}
+          
+          {/* More dropdown menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="relative text-sm font-semibold tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary after:absolute after:bottom-[-4px] after:left-0 after:h-0.5 after:w-0 after:bg-secondary after:transition-all after:duration-300 hover:after:w-full flex items-center gap-1 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">
+              MORE
+              <ChevronDown className="h-4 w-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-primary border-primary-foreground/20 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">
+              <DropdownMenuItem className="text-primary-foreground/80 hover:text-secondary hover:bg-primary-foreground/10 cursor-pointer">
+                <Link to="/contact" className="w-full">
+                  Location & Contact
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-primary-foreground/80 hover:text-secondary hover:bg-primary-foreground/10 cursor-pointer">
+                <Link to="/book" className="w-full">
+                  Book Online
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-primary-foreground/80 hover:text-secondary hover:bg-primary-foreground/10 cursor-pointer">
+                <Link to="/clients" className="w-full">
+                  Clients
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Mobile toggle */}
@@ -104,6 +135,32 @@ const Navbar = () => {
                 </Link>
               )
             )}
+            
+            {/* Mobile More menu items */}
+            <div className="border-t border-primary-foreground/10 pt-4">
+              <div className="text-sm font-semibold tracking-wider text-primary-foreground/60 mb-2">MORE</div>
+              <Link
+                to="/contact"
+                onClick={() => setOpen(false)}
+                className="block text-sm font-medium tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary py-2"
+              >
+                Location & Contact
+              </Link>
+              <Link
+                to="/book"
+                onClick={() => setOpen(false)}
+                className="block text-sm font-medium tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary py-2"
+              >
+                Book Online
+              </Link>
+              <Link
+                to="/clients"
+                onClick={() => setOpen(false)}
+                className="block text-sm font-medium tracking-wider text-primary-foreground/80 transition-colors hover:text-secondary py-2"
+              >
+                Clients
+              </Link>
+            </div>
           </div>
         </div>
       )}

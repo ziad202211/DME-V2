@@ -21,15 +21,13 @@ const About = () => {
       <section className="bg-background py-20">
         <div className="container mx-auto px-6 max-w-4xl">
           <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-            DM Enterprise Consulting, LLC (DME) is a professional consulting firm established in 2004, 
-            headquartered in Elkridge, Maryland. We specialize in providing comprehensive engineering, 
-            information technology, and construction management services to public and private sector clients.
+            
+DM Enterprise (DME) is multi-disciplinary engineering MBE/DBE firm located in Maryland. DME offers a wide range of civil 
+engineering services including, water/wastewater utilities engineering services, environmental engineering, construction management, geospatial technology, IT solutions, inspection services, program management, project controls, constructability review, geotechnical, structural design and valve assessment for both public agencies and private corporations.
           </p>
           <p className="text-lg text-muted-foreground leading-relaxed mb-12">
-            As a certified MBE/DBE/SBE firm, DME is committed to delivering innovative solutions 
-            that meet the highest standards of quality and efficiency. Our team of experienced 
-            professionals brings decades of combined expertise in infrastructure development, 
-            utility engineering, and project management.
+            DME’s principals have over 50 years of combined experience and are committed to achieving the highest safety standards on all of their projects while bringing a unique set of capabilities when serving as the project owner’s representative. DME routinely incorporates risk analysis and mitigation on all projects while ensuring that the proper budgetary controls and cost constraints are 
+            integrated to ensure that projects are completed on time and within budget.
           </p>
 
           <div className="grid gap-8 md:grid-cols-3">

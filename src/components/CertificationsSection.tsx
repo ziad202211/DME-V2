@@ -1,11 +1,13 @@
 import { Shield } from "lucide-react";
 
 const certifications = [
-  "MBE – Minority Business Enterprise",
-  "DBE – Disadvantaged Business Enterprise",
-  "SBE – Small Business Enterprise",
-  "MDOT MBE Certified",
-  "SBA 8(a) Certified",
+  { name: "MBE – Minority Business Enterprise", image: "/c1.avif" },
+  { name: "DBE – Disadvantaged Business Enterprise", image: "/c2.avif" },
+  { name: "SBE – Small Business Enterprise", image: "/c3.avif" },
+  { name: "MDOT MBE Certified", image: "/c4.avif" },
+  { name: "SBA 8(a) Certified", image: "/c5.avif" },
+  { name: "WOSB – Women-Owned Small Business", image: "/c6.avif" },
+  { name: "HUBZone Certified", image: "/c7.avif" },
 ];
 
 const CertificationsSection = () => {
@@ -20,16 +22,22 @@ const CertificationsSection = () => {
           <div className="mx-auto mt-4 h-1 w-20 bg-gradient-to-r from-transparent via-secondary to-transparent rounded-full" />
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-5">
+        <div className="flex flex-wrap items-center justify-center gap-8">
           {certifications.map((cert) => (
             <div
-              key={cert}
-              className="flex items-center gap-3 rounded-xl border border-border bg-card px-6 py-4 shadow-sm transition-all duration-300 hover:shadow-md hover:border-secondary/40 hover:-translate-y-0.5"
+              key={cert.name}
+              className="group relative"
             >
-              <div className="flex items-center justify-center rounded-lg bg-primary p-2">
-                <Shield size={18} className="text-secondary" />
+              <img 
+                src={cert.image} 
+                alt={cert.name}
+                className="h-20 w-20 object-contain transition-transform duration-300 group-hover:scale-110 cursor-pointer"
+              />
+              {/* Hover tooltip */}
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-slate-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
+                {cert.name}
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-900"></div>
               </div>
-              <span className="text-sm font-semibold text-foreground">{cert}</span>
             </div>
           ))}
         </div>
