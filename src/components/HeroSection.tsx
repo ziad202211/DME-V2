@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroBg from "@/assets/hero-bg.png";
 
 const HeroSection = () => {
   const scrollToServices = () => {
@@ -27,7 +27,7 @@ const HeroSection = () => {
           </p>
         </div>
         <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-black leading-tight text-primary-foreground">
-          DM ENTERPRISE
+          DM Enterprise
         </h1>
         <p className="mt-2 font-heading text-lg sm:text-xl md:text-2xl font-medium tracking-[0.3em] sm:tracking-[0.4em] text-primary-foreground/80">
           CONSULTING
