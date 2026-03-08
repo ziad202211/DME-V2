@@ -15,7 +15,7 @@ const About = () => {
           <div>
             
 
-            <h1 className="font-heading text-5xl md:text-5xl font-black mt-4 leading-tight">
+            <h1 className="font-heading text-5xl md:text-5xl font-black mt-4 leading-relaxed">
               Engineering Excellence Since 2001
             </h1>
 
@@ -35,10 +35,12 @@ const About = () => {
       </section>
 
       {/* COMPANY STORY */}
-      <section className="py-24 bg-muted/40">
+      <section className="py-20 bg-muted/40">
         <div className="container mx-auto px-6 max-w-4xl text-center">
 
-          
+          <h1 className="text-4xl font-bold mb-10 text-[#190ab0]">
+            Our Story
+          </h1>
 
           <p className="text-lg text-muted-foreground leading-relaxed">
             Over the years, our team has grown in expertise and capability, achieving key milestones in water/wastewater projects, environmental engineering, and large-scale infrastructure programs. Today, with over 50 years of combined leadership experience, DME is a trusted partner for public and private clients recognized for our commitment to safety, innovation, and delivering projects on time and within budget.
@@ -70,7 +72,7 @@ const About = () => {
                     </div>
 
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+                      <h3 className="text-xl font-bold mb-2 ">{item.title}</h3>
                       <p className="text-muted-foreground text-sm leading-relaxed">
                         {item.text}
                       </p>
@@ -93,12 +95,12 @@ const About = () => {
                 return (
                   <div key={item.label} className="text-center space-y-3">
                     <div className="mx-auto w-fit p-3 rounded-lg bg-primary/10">
-                      <Icon className="text-primary" size={28}/>
+                      <Icon className="text-[#190ab0]" size={28}/>
                     </div>
 
-                    <h3 className="text-3xl font-bold">{item.number}</h3>
+                    <h3 className="text-3xl font-bold text-[#190ab0]">{item.number}</h3>
 
-                    <p className="text-muted-foreground text-sm">{item.label}</p>
+                    <p className="text-muted-foreground text-sm text-[#190ab0]">{item.label}</p>
                   </div>
                 );
               })}
@@ -179,24 +181,39 @@ const About = () => {
 </section>
 
       {/* CERTIFICATIONS */}
-      <section className="py-20">
+      <section className="py-20 overflow-hidden">
 
-        <div className="container mx-auto px-6 text-center">
+        <div className="container mx-auto  text-center">
 
           <h2 className="text-3xl font-bold mb-12">
             Certifications & Accreditations
           </h2>
 
-          <div className="flex flex-wrap justify-center gap-12">
-
-            {certifications.map((cert, i) => (
-              <img
-                key={i}
-                src={cert}
-                className="h-14 object-contain opacity-80 hover:opacity-100"
-              />
-            ))}
-
+          <div className="relative overflow-hidden py-8">
+            <div className="flex animate-scroll">
+              <div className="flex">
+                {certifications.map((cert, i) => (
+                  <div key={`first-${i}`} className="flex-shrink-0 w-48 h-24 flex items-center justify-center bg-white rounded-lg shadow-sm mx-3">
+                    <img
+                      src={cert}
+                      className="h-16 object-contain opacity-80 hover:opacity-100 transition-opacity"
+                      alt={`Certification ${i + 1}`}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="flex">
+                {certifications.map((cert, i) => (
+                  <div key={`second-${i}`} className="flex-shrink-0 w-48 h-24 flex items-center justify-center bg-white rounded-lg shadow-sm mx-3">
+                    <img
+                      src={cert}
+                      className="h-16 object-contain opacity-80 hover:opacity-100 transition-opacity"
+                      alt={`Certification ${i + 1}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
         </div>

@@ -78,9 +78,11 @@ export const clients = [
 ];
 
 export const certifications = [
-  "/certs/mbe.png",
-  "/certs/dbe.png",
-  "/certs/hubzone.png",
-  "/certs/mdot.png",
-  "/certs/nmsdc.png"
+  "/c1.avif",
+  "/c2.avif",
+  "/c3.avif",
+  "/c3.jpg",
+  "/c4.jpg",
+  "/c6.avif",
+  "/c7.avif",
 ];
