@@ -15,11 +15,11 @@ const CertificationsSection = () => {
     <section className="bg-muted py-16 sm:py-20">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="mb-8 sm:mb-12 text-center">
-          <p className="text-xs sm:text-sm font-semibold tracking-[0.15em] sm:tracking-[0.2em] text-secondary uppercase">Trusted & Certified</p>
+          <p className="text-xs sm:text-sm font-semibold tracking-[0.15em] sm:tracking-[0.2em] text-[#190ab0] uppercase">Trusted & Certified</p>
           <h2 className="font-heading mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground">
             Certifications
           </h2>
-          <div className="mx-auto mt-3 sm:mt-4 h-1 w-16 sm:w-20 bg-gradient-to-r from-transparent via-secondary to-transparent rounded-full" />
+          <div className="mx-auto mt-3 sm:mt-4 h-1 w-16 sm:w-20 bg-gradient-to-r from-transparent via-[#190ab0] to-transparent rounded-full" />
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-8">

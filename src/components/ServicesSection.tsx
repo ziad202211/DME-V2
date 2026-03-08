@@ -1,205 +1,66 @@
-import { Settings, Monitor, BarChart3, HardHat, Globe, Wrench, ChevronRight, Star } from "lucide-react";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { Settings, Monitor, BarChart3, HardHat, Globe, Wrench, ChevronRight } from "lucide-react";
 
 const services = [
-  {
-    icon: Settings,
-    title: "PROGRAM MANAGEMENT",
-    bgImage: "url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&h=600&fit=crop')",
-    overlayColor: "linear-gradient(to right, rgba(60, 90, 120, 0.7) 0%, rgba(60, 90, 120, 0.7) 50%, rgba(26, 37, 47, 0.9) 50%, rgba(26, 37, 47, 0.9) 100%)",
-    items: [
-      { name: "Project Planning", highlighted: true },
-      { name: "Standard Operating Procedures", highlighted: false },
-      { name: "Design Review", highlighted: false },
-      { name: "QA/QC", highlighted: true },
-      { name: "Utility Coordination", highlighted: false },
-      { name: "Asset Management", highlighted: false },
-      { name: "Public Outreach", highlighted: false },
-      { name: "Environmental Compliance", highlighted: true },
-    ],
-  },
-  {
-    icon: Monitor,
-    title: "IT SOLUTIONS",
-    bgImage: "url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop')",
-    overlayColor: "linear-gradient(to right, rgba(60, 90, 120, 0.7) 0%, rgba(60, 90, 120, 0.7) 50%, rgba(26, 37, 47, 0.9) 50%, rgba(26, 37, 47, 0.9) 100%)",
-    items: [
-      { name: "Network Design & Implementation", highlighted: false },
-      { name: "Virtualization", highlighted: true },
-      { name: "SharePoint Administration", highlighted: false },
-      { name: "Web Technologies", highlighted: false },
-      { name: "Database Management", highlighted: true },
-      { name: "IT Strategic Planning", highlighted: false },
-      { name: "System Integration", highlighted: false },
-      { name: "Cloud Solutions", highlighted: true },
-    ],
-  },
-  {
-    icon: BarChart3,
-    title: "PROJECT CONTROLS",
-    bgImage: "url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop')",
-    overlayColor: "linear-gradient(to right, rgba(60, 90, 120, 0.7) 0%, rgba(60, 90, 120, 0.7) 50%, rgba(26, 37, 47, 0.9) 50%, rgba(26, 37, 47, 0.9) 100%)",
-    items: [
-      { name: "Schedule Reviews & Updates", highlighted: false },
-      { name: "Claims Review & Analysis", highlighted: true },
-      { name: "Risk Analysis", highlighted: false },
-      { name: "Earned Value Management", highlighted: false },
-      { name: "Cost Estimating", highlighted: true },
-      { name: "Document Control", highlighted: false },
-      { name: "Progress Reporting", highlighted: false },
-      { name: "Change Order Management", highlighted: true },
-    ],
-  },
-  {
-    icon: HardHat,
-    title: "CONSTRUCTION MANAGEMENT",
-    bgImage: "url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop')",
-    overlayColor: "linear-gradient(to right, rgba(60, 90, 120, 0.7) 0%, rgba(60, 90, 120, 0.7) 50%, rgba(26, 37, 47, 0.9) 50%, rgba(26, 37, 47, 0.9) 100%)",
-    items: [
-      { name: "Traffic Maintenance", highlighted: false },
-      { name: "Sediment & Erosion Control", highlighted: true },
-      { name: "Field Inspection", highlighted: false },
-      { name: "Materials Testing Coordination", highlighted: false },
-      { name: "Safety Compliance", highlighted: true },
-      { name: "Contract Administration", highlighted: false },
-      { name: "Quality Assurance", highlighted: false },
-      { name: "Permit Management", highlighted: true },
-    ],
-  },
-  {
-    icon: Globe,
-    title: "GEOSPATIAL TECHNOLOGIES",
-    bgImage: "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=600&fit=crop')",
-    overlayColor: "linear-gradient(to right, rgba(60, 90, 120, 0.7) 0%, rgba(60, 90, 120, 0.7) 50%, rgba(26, 37, 47, 0.9) 50%, rgba(26, 37, 47, 0.9) 100%)",
-    items: [
-      { name: "GIS Analysis & Mapping", highlighted: true },
-      { name: "Geodatabase Design", highlighted: false },
-      { name: "GPS Data Collection", highlighted: false },
-      { name: "Remote Sensing", highlighted: true },
-      { name: "Spatial Analysis", highlighted: false },
-      { name: "Web GIS Applications", highlighted: false },
-      { name: "CAD/GIS Integration", highlighted: true },
-      { name: "Asset Mapping", highlighted: false },
-    ],
-  },
-  {
-    icon: Wrench,
-    title: "UTILITY ENGINEERING",
-    bgImage: "url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&h=600&fit=crop')",
-    overlayColor: "linear-gradient(to right, rgba(60, 90, 120, 0.7) 0%, rgba(60, 90, 120, 0.7) 50%, rgba(26, 37, 47, 0.9) 50%, rgba(26, 37, 47, 0.9) 100%)",
-    items: [
-      { name: "Infrastructure Rehab Design", highlighted: false },
-      { name: "Pumping Stations", highlighted: true },
-      { name: "AMI/AMR Water Meters", highlighted: false },
-      { name: "Water Distribution Systems", highlighted: false },
-      { name: "Sewer Systems", highlighted: true },
-      { name: "Stormwater Management", highlighted: false },
-      { name: "Utility Relocation", highlighted: false },
-      { name: "Condition Assessment", highlighted: true },
-    ],
-  },
+{ icon: Settings, title: "Project Management", description: "Strategic oversight and coordination for complex engineering initiatives." },
+{ icon: HardHat, title: "Construction Management", description: "Field supervision ensuring safety, efficiency, and execution quality." },
+{ icon: Monitor, title: "IT Solutions", description: "Technology infrastructure supporting modern engineering operations." },
+{ icon: BarChart3, title: "Project Controls", description: "Performance monitoring, cost management, and project forecasting." },
+{ icon: Globe, title: "GIS Services", description: "Spatial data analysis supporting infrastructure planning." },
+{ icon: Wrench, title: "Utility Engineering", description: "Design and modernization of essential public infrastructure systems." }
 ];
 
 const ServicesSection = () => {
-  const [hoveredService, setHoveredService] = useState<number | null>(null);
+return (
+<section id="services" className="bg-background py-24">
 
-  return (
-    <section id="services" className="bg-slate-50 py-16 sm:py-20 lg:py-24">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="mb-12 sm:mb-16 text-center">
-          <p className="text-xs sm:text-sm font-semibold tracking-[0.15em] sm:tracking-[0.2em] text-slate-600 uppercase">What We Do</p>
-          <h2 className="font-heading mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900">
-            Our Services
-          </h2>
-          <div className="mx-auto mt-3 sm:mt-4 h-1 w-16 sm:w-20 bg-gradient-to-r from-transparent via-slate-400 to-transparent rounded-full" />
-        </div>
+<div className="container mx-auto px-6">
 
-        <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
-          {services.map((service, index) => {
-            const Icon = service.icon;
-            const isHovered = hoveredService === index;
-            
-            return (
-              <div
-                key={service.title}
-                className="group relative overflow-hidden rounded-xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-[1.02]"
-                onMouseEnter={() => setHoveredService(index)}
-                onMouseLeave={() => setHoveredService(null)}
-              >
-                {/* Background Image */}
-                <div 
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                  style={{ backgroundImage: service.bgImage }}
-                />
-                
-                {/* Split Overlay */}
-                <div 
-                  className="absolute inset-0"
-                  style={{ background: service.overlayColor }}
-                />
-                
-                {/* Content */}
-                <div className="relative z-10 flex h-full min-h-[300px] sm:min-h-[350px] md:min-h-[400px]">
-                  {/* Left Side - Title and Icon */}
-                  <div className="flex w-full sm:w-1/2 flex-col justify-center p-4 sm:p-6 lg:p-8">
-                    <div className="mb-4 sm:mb-6 flex items-center gap-3 sm:gap-4">
-                      <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
-                        <Icon size={20} className="text-white" />
-                      </div>
-                    </div>
-                    <h3 className="font-heading text-lg sm:text-xl font-bold text-white tracking-wide mb-2 sm:mb-3">
-                      {service.title}
-                    </h3>
-                    <div className="h-0.5 w-12 sm:w-16 bg-white/60 rounded-full" />
-                  </div>
+<div className="text-center mb-20">
+<h2 className="text-3xl font-bold text-foreground">Services</h2>
+</div>
 
-                  {/* Right Side - Services List */}
-                  <div className="flex w-full sm:w-1/2 flex-col justify-center p-4 sm:p-6 lg:p-8">
-                    <div className="grid gap-1.5 sm:gap-2">
-                      {service.items.map((item, itemIndex) => (
-                        <div
-                          key={item.name}
-                          className={cn(
-                            "flex items-center gap-2 rounded-md px-2 sm:px-3 py-1.5 sm:py-2 transition-all duration-200 text-xs sm:text-sm",
-                            item.highlighted
-                              ? "bg-yellow-400 text-slate-900 font-semibold"
-                              : "text-white/90",
-                            isHovered && "translate-x-1"
-                          )}
-                          style={{
-                            transitionDelay: `${itemIndex * 50}ms`
-                          }}
-                        >
-                          {item.highlighted ? (
-                            <div className="h-1.5 w-1.5 rounded-full bg-yellow-600 flex-shrink-0" />
-                          ) : (
-                            <ChevronRight className="h-3 w-3 flex-shrink-0 text-white/60" />
-                          )}
-                          <span className="leading-tight text-xs sm:text-sm">{item.name}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+<div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
 
-        {/* Bottom CTA */}
-        <div className="mt-12 sm:mt-16 text-center">
-          <p className="text-base sm:text-lg text-slate-600 mb-4 sm:mb-6">
-            Need a custom solution? We've got you covered.
-          </p>
-          <button className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-6 sm:px-8 py-2.5 sm:py-3 font-semibold text-white transition-all duration-300 hover:bg-slate-800 hover:shadow-lg text-sm sm:text-base">
-            Discuss Your Project
-            <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
-          </button>
-        </div>
-      </div>
-    </section>
-  );
+{services.map((service, index) => {
+
+const Icon = service.icon;
+
+return (
+
+<div key={index} className="border-b border-border pb-8">
+
+<div className="flex items-center gap-4 mb-6">
+
+<div className="text-[#190ab0]">
+<Icon size={26}/>
+</div>
+
+<h3 className="text-xl font-semibold text-foreground">
+{service.title}
+</h3>
+
+</div>
+
+<p className="text-sm leading-relaxed text-muted-foreground max-w-sm">
+{service.description}
+</p>
+
+<div className="mt-6 flex items-center gap-1 text-sm text-[#190ab0] font-medium">
+Learn more <ChevronRight size={15}/>
+</div>
+
+</div>
+
+);
+
+})}
+
+</div>
+
+</div>
+
+</section>
+);
 };
 
 export default ServicesSection;

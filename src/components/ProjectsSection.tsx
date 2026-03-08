@@ -29,63 +29,69 @@ const projects = [
 ];
 
 const ProjectsSection = () => {
-  return (
-    <section id="projects" className="bg-background py-16 sm:py-20 lg:py-24">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="mb-12 sm:mb-16 text-center">
-          <p className="text-xs sm:text-sm font-semibold tracking-[0.15em] sm:tracking-[0.2em] text-secondary uppercase">Our Work</p>
-          <h2 className="font-heading mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground">
-            Featured Projects
-          </h2>
-          <div className="mx-auto mt-3 sm:mt-4 h-1 w-16 sm:w-20 bg-gradient-to-r from-transparent via-secondary to-transparent rounded-full" />
-        </div>
+return (
 
-        <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2">
-          {projects.map((project, i) => (
-            <Link
-              key={project.slug}
-              to={`/projects/${project.slug}`}
-              className="group relative overflow-hidden rounded-xl border border-border bg-primary transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
-            >
-              {/* Project Image */}
-              <div className="relative h-48 overflow-hidden">
-                <img 
-                  src={project.image} 
-                  alt={project.title}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent" />
-              </div>
-              
-              {/* Content */}
-              <div className="relative p-4 sm:p-6 lg:p-8">
-                {/* Top accent bar */}
-                <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-secondary via-secondary/80 to-secondary/40" />
-                {/* Hover glow */}
-                <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+<section id="projects" className="bg-background py-24">
 
-                <div className="relative">
-                  <span className="mb-2 sm:mb-3 inline-block rounded-full bg-secondary/10 px-2 sm:px-3 py-0.5 sm:py-1 text-xs font-semibold text-secondary tracking-wide">
-                    0{i + 1}
-                  </span>
-                  <h3 className="font-heading text-lg sm:text-xl font-bold text-primary-foreground mb-2 sm:mb-3">
-                    {project.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-primary-foreground/60 mb-4 sm:mb-6 leading-relaxed">
-                    {project.description}
-                  </p>
-                  <span className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-secondary transition-all group-hover:gap-3">
-                    View Details <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+<div className="container mx-auto px-6">
+
+<div className="text-center mb-20">
+<h2 className="mt-3 text-4xl font-bold text-foreground">
+ Projects
+</h2>
+
+</div>
+
+<div className="grid gap-10 md:grid-cols-2">
+
+{projects.map((project,i)=>(
+
+<Link
+key={project.slug}
+to={`/projects/${project.slug}`}
+className="group relative overflow-hidden rounded-2xl"
+>
+
+<img
+src={project.image}
+alt={project.title}
+className="h-72 w-full object-cover transition duration-700 group-hover:scale-110"
+/>
+
+<div className="absolute inset-0 bg-black/50"/>
+<div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"/>
+
+<div className="absolute bottom-0 p-8 text-white">
+
+<span className="text-xs tracking-widest text-white">
+0{i+1}
+</span>
+
+<h3 className="text-xl font-semibold mt-2">
+{project.title}
+</h3>
+
+<p className="text-sm text-white/70 mt-2 max-w-md">
+{project.description}
+</p>
+
+<div className="mt-4 flex items-center gap-1 text-sm text-secondary font-bold">
+View Details <ArrowRight size={15}/>
+</div>
+
+</div>
+
+</Link>
+
+))}
+
+</div>
+
+</div>
+
+</section>
+
+);
 };
 
 export default ProjectsSection;

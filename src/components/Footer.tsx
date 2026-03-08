@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="h-1 w-full bg-gradient-to-r from-secondary/20 via-secondary to-secondary/20" />
 
       <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
-        <div className="grid gap-8 sm:gap-12 md:grid-cols-3">
+        <div className="grid gap-8 sm:gap-12 md:grid-cols-4">
           {/* Brand */}
           <div className="md:col-span-1">
             <h3 className="font-heading text-xl sm:text-2xl font-extrabold">DM ENTERPRISE</h3>
@@ -28,6 +28,29 @@ const Footer = () => {
                 { label: "Services", to: "/#services" },
                 { label: "Projects", to: "/#projects" },
                 { label: "Careers", to: "/careers" },
+              ].map((link) => (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  className="text-xs sm:text-sm text-primary-foreground/70 hover:text-secondary transition-colors hover:translate-x-1 inline-block py-1"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Services */}
+          <div>
+            <h4 className="font-heading text-base sm:text-lg font-bold mb-3 sm:mb-4 text-secondary">Services</h4>
+            <div className="flex flex-col gap-1.5 sm:gap-2">
+              {[
+                { label: "Program Management", to: "/services/program-management" },
+                { label: "Construction Management", to: "/services/construction-management" },
+                { label: "IT Solutions", to: "/services/it-solutions" },
+                { label: "Project Controls", to: "/services/project-controls" },
+                { label: "Geospatial Technologies", to: "/services/geospatial-technologies" },
+                { label: "Utility Engineering", to: "/services/utility-engineering" },
               ].map((link) => (
                 <Link
                   key={link.label}

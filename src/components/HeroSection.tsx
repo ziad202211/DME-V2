@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ArrowRight } from "lucide-react";
 import heroBg from "@/assets/hero-bg.png";
 
 const HeroSection = () => {
@@ -7,46 +7,68 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex flex-col justify-center overflow-hidden">
+
       {/* Background */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
+        className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${heroBg})` }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/90 via-primary/75 to-primary/95" />
 
-      {/* Decorative elements */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary to-transparent" />
-      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent" />
+      <div className="absolute inset-0 bg-primary/50" />
 
-      {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 text-center">
-        <div className="inline-block mb-4 sm:mb-6 rounded-full border border-secondary/30 bg-secondary/10 px-3 sm:px-5 py-1.5 sm:py-2">
-          <p className="text-xs font-semibold tracking-[0.2em] sm:tracking-[0.3em] text-secondary uppercase">
-            Engineering Excellence Since 2004
-          </p>
+      {/* Hero Content */}
+      <div className="relative z-10 container mx-auto px-6 lg:px-12 pt-28 pb-16">
+
+        <div className="max-w-2xl">
+          
+          
+
+          <h1 className="mt-4 font-heading text-5xl md:text-5xl lg:text-5xl font-bold text-primary-foreground leading-relaxed">
+            Smart Engineering For Complex Projects
+          </h1>
+
+            <p className="mt-4 text-base text-primary-foreground">50+ years combined leadership experience in Project Management,
+               Geospatial Technology, and Smarter Infrastructure.</p>
+    
+
+          <button className="mt-8 inline-flex items-center gap-2 bg-white text-[#190ab0] px-6 py-3 rounded-md font-medium">
+            Schedule Consultation
+            <ArrowRight size={16} />
+          </button>
+
         </div>
-        <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-black leading-tight text-primary-foreground">
-          DM Enterprise
-        </h1>
-        <p className="mt-2 font-heading text-lg sm:text-xl md:text-2xl font-medium tracking-[0.3em] sm:tracking-[0.4em] text-primary-foreground/80">
-          CONSULTING
-        </p>
-        <div className="mx-auto mt-4 sm:mt-6 h-1 w-16 sm:w-20 md:w-24 bg-gradient-to-r from-transparent via-secondary to-transparent rounded-full" />
-        <p className="mx-auto mt-6 sm:mt-8 max-w-2xl text-base sm:text-lg text-primary-foreground/70 leading-relaxed px-4">
-          Professional engineering, IT solutions, and construction management services.
-          A certified MBE/DBE/SBE firm dedicated to delivering quality infrastructure projects.
-        </p>
       </div>
 
-      {/* Scroll indicator */}
-      <button
+      {/* Blue Service Bar */}
+      {/* <div className="absolute bottom-0 left-0 w-full bg-[white] text-[#190ab0] flex items-center" >
+
+        <div className="container mx-auto px-6 py-4">
+          <p className="text-center text-lg font-medium mb-6">50+ years combined leadership experience in</p>
+          <div className="flex flex-wrap justify-between gap-8 md:gap-12 max-w-3xl mx-auto">
+            <div className="text-center flex-shrink-0">
+              <p className="font-semibold">Project Management</p>
+            </div>
+
+            <div className="text-center flex-shrink-0">
+              <p className="font-semibold">Geospatial Technology</p>
+            </div>
+
+            <div className="text-center flex-shrink-0">
+              <p className="font-semibold">Smarter Infrastructure</p>
+            </div>
+          </div>
+        </div>
+      </div> */}
+
+      {/* Scroll */}
+      {/* <button
         onClick={scrollToServices}
-        className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-secondary transition-opacity hover:opacity-70"
-        aria-label="Scroll down"
+        className="absolute bottom-1 left-1/2 -translate-x-1/2 animate-bounce text-[#190ab0]"
       >
-        <ChevronDown size={32} className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9" />
-      </button>
+        <ChevronDown size={28} />
+      </button> */}
+
     </section>
   );
 };
