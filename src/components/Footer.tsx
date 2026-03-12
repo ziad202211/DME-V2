@@ -1,38 +1,184 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+  Building,
+  Clock,
+} from "lucide-react";
 
-const Footer = () => {
+export default function Footer() {
+  const [footerContent, setFooterContent] = useState<any>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFooterContent();
+  }, []);
+
+  const fetchFooterContent = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("footer_content")
+        .select("*")
+        .order("order_index", { ascending: true });
+
+      if (error) throw error;
+
+      const grouped = (data || []).reduce((acc: any, item: any) => {
+        acc[item.section] = item;
+        return acc;
+      }, {});
+
+      setFooterContent(grouped);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const currentYear = new Date().getFullYear();
+
+  const defaultContent = {
+    company: {
+      title: "DM ENTERPRISE",
+      content: {
+        description:
+          "A certified MBE/DBE/SBE firm providing professional engineering, IT, and construction management services.",
+        address: "6000 Brooktree Road, Suite 306, Elkridge, MD 21075",
+        phone: "(443) 583-2455",
+        email: "info@dmeconsulting-us.com",
+      },
+    },
+    services: {
+      content: {
+        links: [
+          { title: "Program Management", url: "/services/program-management" },
+          {
+            title: "Construction Management",
+            url: "/services/construction-management",
+          },
+          { title: "IT Solutions", url: "/services/it-solutions" },
+          { title: "Project Controls", url: "/services/project-controls" },
+          {
+            title: "Geospatial Technologies",
+            url: "/services/geospatial-technologies",
+          },
+          { title: "Utility Engineering", url: "/services/utility-engineering" },
+        ],
+      },
+    },
+    contact: {
+      content: {
+        hours: "Monday - Friday: 8:00 AM - 6:00 PM",
+        address: "6000 Brooktree Road, Suite 306, Elkridge, MD 21075",
+        phone: "(443) 583-2455",
+        email: "info@dmeconsulting-us.com",
+      },
+    },
+    social: {
+      content: {
+        links: [
+          { platform: "Facebook", url: "https://facebook.com" },
+          { platform: "Twitter", url: "https://twitter.com" },
+          { platform: "LinkedIn", url: "https://linkedin.com" },
+          { platform: "Instagram", url: "https://instagram.com" },
+        ],
+      },
+    },
+  };
+
+  const content = { ...defaultContent, ...footerContent };
+
+  const getSocialIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
+      case "facebook":
+        return <Facebook className="h-5 w-5" />;
+      case "twitter":
+        return <Twitter className="h-5 w-5" />;
+      case "linkedin":
+        return <Linkedin className="h-5 w-5" />;
+      case "instagram":
+        return <Instagram className="h-5 w-5" />;
+      default:
+        return <Building className="h-5 w-5" />;
+    }
+  };
+
+  if (loading) {
+    return (
+      <footer className="bg-[#0b0666] text-white py-16 text-center">
+        <div className="animate-spin h-8 w-8 border-b-2 border-white mx-auto rounded-full" />
+      </footer>
+    );
+  }
+
   return (
-    <footer className="bg-primary text-primary-foreground">
-      {/* Top accent */}
-      <div className="h-1 w-full bg-gradient-to-r from-secondary/20 via-secondary to-secondary/20" />
+    <footer className="relative bg-[#0b0666] text-white overflow-hidden">
+      {/* glow */}
+      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#190ab0]/30 blur-[120px]" />
 
-      <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
-        <div className="grid gap-8 sm:gap-12 md:grid-cols-4">
+      {/* accent line */}
+      <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#190ab0] to-transparent" />
+
+      <div className="relative container mx-auto px-6 py-10">
+        <div className="grid md:grid-cols-4 gap-12">
           {/* Brand */}
-          <div className="md:col-span-1">
-            <h3 className="font-heading text-xl sm:text-2xl font-extrabold">DM ENTERPRISE</h3>
-            <p className="text-xs font-medium tracking-[0.2em] sm:tracking-[0.25em] text-secondary mb-3 sm:mb-4">CONSULTING</p>
-            <p className="text-xs sm:text-sm text-primary-foreground/70 leading-relaxed">
-              A certified MBE/DBE/SBE firm providing professional engineering, IT, and construction management services.
-            </p>
+          <div>
+            <div className="mb-7">
+              <img
+                src="/logo.png"
+                alt="DM Enterprise"
+                className="h-12 w-auto"
+                onError={(e) => {
+                  e.currentTarget.src = "/fallback-logo.png";
+                }}
+              />
+            </div>
+            <div className="space-y-4 text-white text-sm">
+              <div className="flex items-start gap-3">
+                <MapPin className="h-4 w-4 text-white mt-[2px]" />
+                <span>{content.contact?.content?.location || content.company?.content?.address}</span>
+              </div>
+
+              {(content.contact?.content?.phones || [content.contact?.content?.phone || content.company?.content?.phone]).map((phone: string, index: number) => (
+                <div key={index} className="flex items-center gap-3">
+                  <Phone className="h-4 w-4 text-white" />
+                  <span>{phone}</span>
+                </div>
+              ))}
+
+              <div className="flex items-center gap-3">
+                <Mail className="h-4 w-4 text-white" />
+                <span>{content.contact?.content?.email || content.company?.content?.email}</span>
+              </div>
+            </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick links */}
           <div>
-            <h4 className="font-heading text-base sm:text-lg font-bold mb-3 sm:mb-4 text-secondary">Quick Links</h4>
-            <div className="flex flex-col gap-1.5 sm:gap-2">
+            <h4 className="text-lg font-semibold mb-5 text-white">
+              Quick Links
+            </h4>
+
+            <div className="flex flex-col gap-2">
               {[
                 { label: "Home", to: "/" },
                 { label: "About", to: "/about" },
-                { label: "Services", to: "/#services" },
-                { label: "Projects", to: "/#projects" },
-                { label: "Careers", to: "/careers" },
+                { label: "Services", to: "/services" },
+                { label: "Projects", to: "/projects" },
+                
               ].map((link) => (
                 <Link
                   key={link.label}
                   to={link.to}
-                  className="text-xs sm:text-sm text-primary-foreground/70 hover:text-secondary transition-colors hover:translate-x-1 inline-block py-1"
+                  className="text-sm text-white/70 hover:text-white hover:translate-x-1 transition-all duration-200"
                 >
                   {link.label}
                 </Link>
@@ -42,63 +188,66 @@ const Footer = () => {
 
           {/* Services */}
           <div>
-            <h4 className="font-heading text-base sm:text-lg font-bold mb-3 sm:mb-4 text-secondary">Services</h4>
-            <div className="flex flex-col gap-1.5 sm:gap-2">
-              {[
-                { label: "Program Management", to: "/services/program-management" },
-                { label: "Construction Management", to: "/services/construction-management" },
-                { label: "IT Solutions", to: "/services/it-solutions" },
-                { label: "Project Controls", to: "/services/project-controls" },
-                { label: "Geospatial Technologies", to: "/services/geospatial-technologies" },
-                { label: "Utility Engineering", to: "/services/utility-engineering" },
-              ].map((link) => (
+            <h4 className="text-lg font-semibold mb-5 text-white">
+              Services
+            </h4>
+
+            <div className="flex flex-col gap-2">
+              {content.services?.content?.links?.map((link: any, i: number) => (
                 <Link
-                  key={link.label}
-                  to={link.to}
-                  className="text-xs sm:text-sm text-primary-foreground/70 hover:text-secondary transition-colors hover:translate-x-1 inline-block py-1"
+                  key={i}
+                  to={link.url}
+                  className="text-sm text-white/70 hover:text-white hover:translate-x-1 transition-all duration-200"
                 >
-                  {link.label}
+                  {link.title}
                 </Link>
               ))}
             </div>
           </div>
 
-          {/* Contact */}
+          {/* Social Links */}
           <div>
-            <h4 className="font-heading text-base sm:text-lg font-bold mb-3 sm:mb-4 text-secondary">Contact</h4>
-            <div className="flex flex-col gap-2 sm:gap-3">
-              <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center rounded-lg bg-secondary/10 p-2 mt-0.5">
-                  <MapPin size={12} className="text-secondary shrink-0" />
-                </div>
-                <span className="text-xs sm:text-sm text-primary-foreground/70 leading-relaxed">
-                  6000 Brooktree Road, Suite 306, Elkridge, MD 21075
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center rounded-lg bg-secondary/10 p-2">
-                  <Phone size={12} className="text-secondary shrink-0" />
-                </div>
-                <span className="text-xs sm:text-sm text-primary-foreground/70">(443) 583-2455</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center rounded-lg bg-secondary/10 p-2">
-                  <Mail size={12} className="text-secondary shrink-0" />
-                </div>
-                <span className="text-xs sm:text-sm text-primary-foreground/70 break-all">info@dmeconsulting-us.com</span>
-              </div>
+            <h4 className="text-lg font-semibold mb-5 text-white">
+              Follow Us
+            </h4>
+
+            <div className="flex gap-4">
+              {content.social?.content?.links?.map((link: any, i: number) => (
+                <a
+                  key={i}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-white hover:scale-110 transition-all duration-200"
+                >
+                  {getSocialIcon(link.platform)}
+                </a>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="mt-8 sm:mt-12 border-t border-primary-foreground/10 pt-6 sm:pt-8 text-center">
-          <p className="text-xs sm:text-sm text-primary-foreground/50">
-            © {new Date().getFullYear()} DM Enterprise Consulting, LLC. All rights reserved.
+        {/* bottom */}
+        <div className="mt-10 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-white/40 tracking-wide">
+            {currentYear} {content.company?.title}. All rights reserved.
           </p>
+
+          <div className="flex gap-6 text-sm text-white/40">
+            <Link to="/privacy" className="hover:text-white transition">
+              Privacy
+            </Link>
+
+            <Link to="/terms" className="hover:text-white transition">
+              Terms
+            </Link>
+
+            <Link to="/sitemap" className="hover:text-white transition">
+              Sitemap
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

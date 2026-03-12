@@ -1,116 +1,244 @@
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MapPin, User } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { Project } from "@/types/supabase";
 
-const projectData: Record<string, { title: string; description: string[]; image: string }> = {
-  "cedar-lane": {
-    title: "Cedar Lane Pumping Station",
-    image: "/cedar.avif",
-    description: [
-      "Project Overview",
-      "The Cedar Lane Water Pumping Station project was initiated to provide a backup water supply to increase reliability in zone. Associated site improvements include grading, driveway parking, stormwater management, fencing and landscaping. Howard County DPW is the project owner, and our team performed as a subconsultant under another Prime consultant.",
-      "Scope of Work",
-      "Construction of new 4 MGD water pumping station, complete and in place. The scope of work consists of furnishing of all materials and construction, complete in place, of new excavation, grading, landscaping, yard piping, hydrants, fencing, paving, stormwater management, erosion/sediment control, concrete building foundation, masonry, roofing, doors, windows, water pumps, piping, chemical feed system, HVAC, plumbing, electrical and controls equipment and miscellaneous appurtenances & incidental items.",
-      "Construction Phase",
-      "Our team provided resident inspection and coordination, document control, schedule reviews, assistance with RFI's and Change Orders, and payment application approvals.",
-    ],
-  },
-  "us-route-29": {
-    title: "US Route 29 Transmission Water Main",
-    image: "/us route.avif",
-    description: [
-      "Project Overview",
-      "DME provided support for US Route 29 Water Transmission Main Project from Little Patuxent Parkway to Maryland Route 108 within Howard County. This scope of work for this project includes but is not limited to: tunneling under the Route 108 Ramp for installation of a 60-inch diameter casing via micro-tunneling operation, which will require 24 hour per day construction inspection and two 12-hour shifts for 7 days per week. DME senior engineers provided construction oversight for all field activities, approved monthly estimates, and directed progress meetings. Inspection services were provided during contractors work activities, ensure compliance with plans and specifications, document progress, provide detailed daily reporting, site supervision, and complete additional construction management tasks. Inspectors utilized Prolog for all document management as needed for RFIs, submittals, daily reports, and meeting minutes.",
-      "Scope of Work",
-      "This scope of work for this project includes installation of 7,300 linear feet of 36\" BWCCP water main, approximately 752 linear feet of 60-inch diameter casing via tunneling methods, a cathodic protection system, access manhole/blow-off assemblies, air release valve manholes and assemblies, connections to existing mains, abandonment of existing main, traffic control, surface restoration.",
-      "Construction Phase",
-      "Our team provided resident inspection and coordination, Progress meetings, document control, schedule reviews, assistance with RFI's and Change Orders, and payment application approvals.",
-    ],
-  },
-  "baltimore-water": {
-    title: "Baltimore City Water Main Replacement/Rehab Program",
-    image: "/1273.avif",
-    description: [
-      "Scope of work for this project includes but is not limited to design and staff augmentation for the Water Utility Project Delivery Section including of design review of various water main replacement and rehabilitation projects and other contracts, design phase engineering and management support services, support for A/E consultant management, permitting assistance, construction phase support, and support for community outreach. DME is providing the following services: Technical Reviews, Constructability Reviews, GIS Analysis, and Construction Inspection"
-    ],
-  },
-  "wilde-lake": {
-    title: "Wilde Lake",
-    image: "/wild lake.avif",
-    description: [
-      "Project Scope Project Scope includes replacement of approximately 17,000 linear feet of 4-inch, 6-inch, and 8-inch PVC water distribution main in the Wilde Lake – Bryant Woods section of Howard County including the replacement of water services (to property lines), installation of new meter settings, new in-line valves, new fire hydrants, new cathodic protection, temporary water service systems, traffic control, surface restoration. Construction Phase: Our team provided resident inspection and coordination, document control (SharePoint), schedule reviews, maintained field records and GPS the location of the new water mains as they are being installed, punch list walk through,assistance with RFI's and Change Orders, and payment application approvals"
-    ],
-  },
+/* ── font injection ── */
+const fontStyle = `
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
+  * { font-family: 'IBM Plex Sans', sans-serif; }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(18px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes spinIt { to { transform:rotate(360deg); } }
+
+  .fu  { animation: fadeUp 0.65s cubic-bezier(0.22,1,0.36,1) both; }
+  .fu1 { animation-delay:0.04s; }
+  .fu2 { animation-delay:0.13s; }
+  .fu3 { animation-delay:0.22s; }
+  .fu4 { animation-delay:0.32s; }
+  .fu5 { animation-delay:0.42s; }
+
+  .proj-prose p   { margin-bottom:1.4em; color:#4b5563; line-height:1.85; font-size:1.0625rem; }
+  .proj-prose h2  { font-size:1.4rem; font-weight:600; color:#0d0d0d; margin:2.2em 0 0.55em; letter-spacing:-0.01em; }
+  .proj-prose h3  { font-size:1.05rem; font-weight:500; color:#111; margin:1.8em 0 0.45em; }
+  .proj-prose a   { color:#190ab0; text-decoration:underline; text-underline-offset:3px; }
+  .proj-prose ul  { padding-left:1.4em; margin-bottom:1.4em; color:#4b5563; line-height:1.85; }
+  .proj-prose li  { margin-bottom:0.4em; }
+`;
+
+/* ── helpers ── */
+const parseServices = (raw: unknown): string[] => {
+  try {
+    if (Array.isArray(raw)) return raw as string[];
+    if (typeof raw === "string") return JSON.parse(raw);
+  } catch { /* noop */ }
+  return [];
 };
 
+const MetaItem = ({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) => (
+  <div className="flex flex-col gap-1">
+    <span className="flex items-center gap-1.5 text-[0.67rem] font-medium tracking-[0.18em] uppercase text-[#190ab0]">
+      {icon}
+      {label}
+    </span>
+    <span className="text-sm font-medium text-[#0d0d0d]">{value}</span>
+  </div>
+);
+
+/* ── component ── */
 const ProjectDetail = () => {
   const { slug } = useParams();
-  const project = slug ? projectData[slug] : null;
+  const [project, setProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!project) {
+  useEffect(() => {
+    if (slug) fetchProject();
+  }, [slug]);
+
+  const fetchProject = async () => {
+    const cleanSlug = slug?.split(":")[0]?.trim();
+    try {
+      let { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("slug", cleanSlug)
+        .single();
+
+      if (error && error.code === "PGRST116") {
+        const titleFromSlug = cleanSlug
+          ?.split("-")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ");
+        const { data: d2, error: e2 } = await supabase
+          .from("projects")
+          .select("*")
+          .eq("title", titleFromSlug)
+          .single();
+        if (!e2) data = d2;
+      }
+
+      if (!data) throw new Error("Project not found");
+      setProject(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* loading */
+  if (loading)
     return (
-      <div className="min-h-screen">
-        <Navbar />
-        <section className="bg-primary pt-32 pb-20">
-          <div className="container mx-auto px-6 text-center">
-            <h1 className="font-heading text-4xl font-black text-primary-foreground">Project Not Found</h1>
-          </div>
-        </section>
-        <Footer />
-      </div>
+      <>
+        <style>{fontStyle}</style>
+        <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white">
+          <div
+            className="w-7 h-7 rounded-full border-2 border-gray-200"
+            style={{ borderTopColor: "#190ab0", animation: "spinIt 0.75s linear infinite" }}
+          />
+          <p className="text-[0.65rem] tracking-[0.22em] uppercase text-gray-400">Loading</p>
+        </div>
+      </>
     );
-  }
+
+  /* not found */
+  if (!project)
+    return (
+      <>
+        <style>{fontStyle}</style>
+        <div className="min-h-screen bg-white">
+          <Navbar />
+          <div className="min-h-[55vh] flex flex-col items-center justify-center gap-5 px-6 text-center">
+            <p className="text-[0.65rem] tracking-[0.22em] uppercase text-gray-400">404</p>
+            <h1 className="text-4xl font-light tracking-tight text-[#0d0d0d]">Project Not Found</h1>
+            <Link
+              to="/projects"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[#190ab0] hover:opacity-60 transition-opacity"
+            >
+              <ArrowLeft size={13} /> Back to Projects
+            </Link>
+          </div>
+          <Footer />
+        </div>
+      </>
+    );
+
+  const hasMeta = project.location || project.client;
+  const services = parseServices(project.services);
 
   return (
-    <div className="min-h-screen">
-      <Navbar />
+    <>
+      <style>{fontStyle}</style>
 
-      <section className="bg-primary pt-32 pb-20">
-        <div className="container mx-auto px-6">
-          <Link to="/#projects" className="inline-flex items-center gap-2 text-sm text-secondary mb-6 hover:opacity-80 transition-opacity">
-            <ArrowLeft size={16} /> Back to Projects
+      <div className="min-h-screen bg-white text-[#0d0d0d]">
+        <Navbar />
+
+        {/* ── HERO ── */}
+        <header className="mx-auto px-6 sm:px-10 lg:px-20 pt-28 pb-16">
+
+          {/* back */}
+          <Link
+            to="/projects"
+            className="fu fu1 inline-flex items-center gap-2 text-[0.72rem] font-medium tracking-[0.18em] uppercase text-[#190ab0] hover:opacity-60 transition-opacity no-underline mb-6"
+          >
+            <ArrowLeft size={12} /> All Projects
           </Link>
-          
-          {/* Project Image */}
-          <div className="relative mb-10 group flex justify-center">
-            <div className="inline-block rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-slate-100 to-slate-200">
-              <img 
-                src={project.image} 
-                alt={project.title}
-                className="h-96 object-contain transition-transform duration-700 group-hover:scale-105"
-                style={{
-                  imageRendering: 'crisp-edges',
-                  filter: 'contrast(1.1) brightness(1.05)',
-                  maxWidth: '100%',
-                  display: 'block'
-                }}
-              />
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent opacity-40" />
+
+          {/* two-col on md+, stacked on mobile */}
+          <div className={`grid grid-cols-1 ${project.image_url ? "md:grid-cols-2" : ""} gap-10 md:gap-16 items-center`}>
+
+            {/* text */}
+            <div>
+              <h1 className="fu fu2 text-4xl sm:text-5xl lg:text-6xl font-light leading-[1.08] tracking-[-0.025em] text-[#0d0d0d] mb-5">
+                {project.title}
+              </h1>
+
+              {project.description && (
+                <p className="fu fu3 text-base sm:text-lg leading-relaxed text-gray-500 max-w-lg mb-0">
+                  {project.description}
+                </p>
+              )}
+
+              {hasMeta && (
+                <div className="fu fu4 flex flex-wrap gap-8 mt-8 pt-6 border-t border-gray-200">
+                  {project.location && (
+                    <MetaItem icon={<MapPin size={11} />} label="Location" value={project.location} />
+                  )}
+                  {project.client && (
+                    <MetaItem icon={<User size={11} />} label="Client" value={project.client} />
+                  )}
+                </div>
+              )}
             </div>
-            {/* Subtle border accent */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-secondary to-transparent" />
+
+            {/* image */}
+            {project.image_url && (
+              <div className="fu fu4 rounded-xl overflow-hidden shadow-md">
+                <img
+                  src={project.image_url}
+                  alt={project.title}
+                  className="w-full h-64 sm:h-80 md:h-[420px] object-cover"
+                />
+              </div>
+            )}
           </div>
-          
-          <h1 className="font-heading text-4xl font-black text-primary-foreground md:text-5xl">
-            {project.title}
-          </h1>
-        </div>
-      </section>
+        </header>
 
-      <section className="bg-background py-20">
-        <div className="container mx-auto px-6 max-w-3xl">
-          {project.description.map((para, i) => (
-            <p key={i} className="text-lg text-muted-foreground leading-relaxed mb-6">
-              {para}
-            </p>
-          ))}
-        </div>
-      </section>
+        {/* ── CONTENT ── */}
+        <main className="mx-auto px-6 sm:px-10 lg:px-20 pb-3">
+          <div className="fu fu5 bg-white rounded-2xl p-8 sm:p-12 shadow-sm">
+            {project.content ? (
+              <div
+                className="proj-prose max-w-4xl text-[1.07rem]"
+                dangerouslySetInnerHTML={{ __html: project.content }}
+              />
+            ) : (
+              <p className="text-gray-500 leading-relaxed text-[1.0625rem]">
+                {project.description || "No detailed description available."}
+              </p>
+            )}
+          </div>
+        </main>
 
-      <Footer />
-    </div>
+        {/* ── SERVICES ── */}
+        {services.length > 0 && (
+          <section className="fu fu5  mx-auto px-6 sm:px-10 lg:px-20 pb-20">
+            <div className="bg-white rounded-2xl p-8 sm:p-12 shadow-sm">
+              <p className="text-[0.75rem] font-medium tracking-[0.22em] uppercase text-[#190ab0] mb-6">
+                Services Provided
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {services.map((service, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded border border-gray-200 bg-gray-50 text-sm text-gray-700"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#190ab0] shrink-0" />
+                    {service}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        <Footer />
+      </div>
+    </>
   );
 };
 

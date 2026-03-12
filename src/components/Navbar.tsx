@@ -12,8 +12,8 @@ import {
 const navItems = [
   { label: "Home", path: "/" },
   { label: "About Us", path: "/about" },
-  { label: "Services", path: "/#services", isDropdown: true },
-  { label: "Projects", path: "/#projects" },
+  { label: "Services", path: "/services" },
+  { label: "Projects", path: "/projects" },
 ];
 
 const serviceItems = [
@@ -23,6 +23,7 @@ const serviceItems = [
   { label: "Project Controls", path: "/services/project-controls" },
   { label: "Geospatial Technologies", path: "/services/geospatial-technologies" },
   { label: "Utility Engineering", path: "/services/utility-engineering" },
+  { label: "All Services", path: "/services" },
 ];
 
 const Navbar = () => {
@@ -55,26 +56,8 @@ const Navbar = () => {
         {/* Desktop nav - centered */}
         <div className="hidden items-center gap-4 lg:gap-8 md:flex mx-auto">
           {navItems.map((item) =>
-            item.isDropdown ? (
-              <DropdownMenu key={item.label}>
-                <DropdownMenuTrigger className="relative text-sm lg:text-sm font-normal text-gray-700/80 hover:text-[#190ab0] flex items-center gap-1">
-                  {item.label}
-                  <ChevronDown size={14} />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="bg-white border border-gray-200 shadow-lg">
-                  {serviceItems.map((service) => (
-                    <DropdownMenuItem key={service.path} asChild className="focus:bg-transparent focus:text-[#190ab0]">
-                      <Link
-                        to={service.path}
-                        className="text-sm text-gray-700 hover:text-[#190ab0] w-full px-2 py-2"
-                      >
-                        {service.label}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : item.path.startsWith("/#") ? (
+            
+            item.path.startsWith("/#") ? (
               <button
                 key={item.label}
                 onClick={() => handleClick(item.path)}
@@ -120,25 +103,7 @@ const Navbar = () => {
         <div className="border-t border-gray-200/50 bg-white/80 md:hidden">
           <div className="flex flex-col px-4 sm:px-6 py-4 gap-3 sm:gap-4">
             {navItems.map((item) =>
-              item.isDropdown ? (
-                <div key={item.label} className="flex flex-col gap-2">
-                  <div className="text-sm font-semibold tracking-wider text-gray-700/80 py-1">
-                    {item.label}
-                  </div>
-                  <div className="ml-4 flex flex-col gap-2">
-                    {serviceItems.map((service) => (
-                      <Link
-                        key={service.path}
-                        to={service.path}
-                        onClick={() => setOpen(false)}
-                        className="text-sm font-normal tracking-wider text-gray-600/80 hover:text-[#190ab0] py-1"
-                      >
-                        {service.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ) : item.path.startsWith("/#") ? (
+               item.path.startsWith("/#") ? (
                 <button
                   key={item.label}
                   onClick={() => handleClick(item.path)}

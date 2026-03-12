@@ -1,8 +1,11 @@
 import { BarChart3 } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const ProjectControls = () => {
   return (
     <div className="min-h-screen bg-white py-20">
+      <Navbar />
       <div className="container mx-auto px-6">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">

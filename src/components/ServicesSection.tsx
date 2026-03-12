@@ -1,66 +1,75 @@
-import { Settings, Monitor, BarChart3, HardHat, Globe, Wrench, ChevronRight } from "lucide-react";
+import { Settings, Monitor, BarChart3, HardHat, Globe, Wrench, ArrowUpRight } from "lucide-react";
 
 const services = [
-{ icon: Settings, title: "Project Management", description: "Strategic oversight and coordination for complex engineering initiatives." },
-{ icon: HardHat, title: "Construction Management", description: "Field supervision ensuring safety, efficiency, and execution quality." },
-{ icon: Monitor, title: "IT Solutions", description: "Technology infrastructure supporting modern engineering operations." },
-{ icon: BarChart3, title: "Project Controls", description: "Performance monitoring, cost management, and project forecasting." },
-{ icon: Globe, title: "GIS Services", description: "Spatial data analysis supporting infrastructure planning." },
-{ icon: Wrench, title: "Utility Engineering", description: "Design and modernization of essential public infrastructure systems." }
+  { icon: Settings, title: "Project Management", description: "Strategic oversight and coordination for complex engineering initiatives." },
+  { icon: HardHat, title: "Construction Management", description: "Field supervision ensuring safety, efficiency, and execution quality." },
+  { icon: Monitor, title: "IT Solutions", description: "Technology infrastructure supporting modern engineering operations." },
+  { icon: BarChart3, title: "Project Controls", description: "Performance monitoring, cost management, and project forecasting." },
+  { icon: Globe, title: "GIS Services", description: "Spatial data analysis supporting infrastructure planning and delivery." },
+  { icon: Wrench, title: "Utility Engineering", description: "Design and modernization of essential public infrastructure systems." },
 ];
 
+const BRAND = "#190ab0";
+
 const ServicesSection = () => {
-return (
-<section id="services" className="bg-background py-24">
+  return (
+    <section id="services" className="bg-neutral-50 py-20 px-6">
+      <div className="max-w-6xl mx-auto">
 
-<div className="container mx-auto px-6">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <p className="text-xl tracking-[0.15em] uppercase font-medium mb-3" style={{ color: BRAND }}>
+            Services
+          </p>
+          
+        </div>
 
-<div className="text-center mb-20">
-<h2 className="text-3xl font-bold text-foreground">Services</h2>
-</div>
+        {/* Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-l border-t border-neutral-200">
+          {services.map((service, index) => {
+            const Icon = service.icon;
+            return (
+              <div
+                key={index}
+                className="group flex flex-col gap-4 p-8 border-r border-b border-neutral-200 bg-white hover:bg-neutral-50 transition-colors duration-200 cursor-pointer"
+              >
+                {/* Icon */}
+                <div
+                  className="w-10 h-10 flex items-center justify-center rounded-lg shrink-0"
+                  style={{ backgroundColor: `${BRAND}10` }}
+                >
+                  <Icon size={18} style={{ color: BRAND }} />
+                </div>
 
-<div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
+                {/* Title */}
+                <h3 className="text-[20px] font-medium text-neutral-900 leading-snug">
+                  {service.title}
+                </h3>
 
-{services.map((service, index) => {
+                {/* Description */}
+                <p className="text-[15px] leading-relaxed text-neutral-500 flex-1">
+                  {service.description}
+                </p>
 
-const Icon = service.icon;
+                {/* Footer */}
+                <div className="flex items-center justify-between pt-3 border-t border-neutral-100 mt-auto">
+                  <span className="text-[14px] font-medium tracking-wide" style={{ color: BRAND }}>
+                    Learn more
+                  </span>
+                  <ArrowUpRight
+                    size={16}
+                    className="text-neutral-400 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    style={{ color: `group-hover:${BRAND}` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-return (
-
-<div key={index} className="border-b border-border pb-8">
-
-<div className="flex items-center gap-4 mb-6">
-
-<div className="text-[#190ab0]">
-<Icon size={26}/>
-</div>
-
-<h3 className="text-xl font-semibold text-foreground">
-{service.title}
-</h3>
-
-</div>
-
-<p className="text-sm leading-relaxed text-muted-foreground max-w-sm">
-{service.description}
-</p>
-
-<div className="mt-6 flex items-center gap-1 text-sm text-[#190ab0] font-medium">
-Learn more <ChevronRight size={15}/>
-</div>
-
-</div>
-
-);
-
-})}
-
-</div>
-
-</div>
-
-</section>
-);
+      </div>
+    </section>
+  );
 };
 
 export default ServicesSection;

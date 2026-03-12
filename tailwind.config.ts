@@ -24,8 +24,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['Montserrat', 'sans-serif'],
-        sans: ['Open Sans', 'sans-serif'],
+        heading: ['IBM Plex Sans', 'sans-serif'],
+        sans: ['IBM Plex Sans', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
