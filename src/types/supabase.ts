@@ -6,6 +6,7 @@ export interface Service {
   content?: string;
   icon?: string;
   image_url?: string;
+  webp_image_url?: string;
   featured: boolean;
   order_index: number;
   created_at: string;
@@ -25,6 +26,7 @@ export interface Project {
   status: string;
   featured: boolean;
   image_url?: string;
+  webp_image_url?: string;
   gallery?: string[];
   services?: string[];
   order_index: number;
@@ -43,6 +45,7 @@ export interface AboutContent {
   title?: string;
   content?: string;
   image_url?: string;
+  webp_image_url?: string;
   order_index: number;
   created_at: string;
   updated_at: string;
@@ -71,6 +74,7 @@ export interface TeamMember {
   name: string;
   position: string;
   photo_url?: string;
+  webp_photo_url?: string;
   description?: string;
   linkedin_url?: string;
   order_index: number;
@@ -82,6 +86,7 @@ export interface AboutClient {
   id: string;
   name: string;
   logo_url?: string;
+  webp_logo_url?: string;
   order_index: number;
   created_at: string;
   updated_at: string;
@@ -91,6 +96,7 @@ export interface AboutCertification {
   id: string;
   name: string;
   image_url?: string;
+  webp_image_url?: string;
   order_index: number;
   created_at: string;
   updated_at: string;

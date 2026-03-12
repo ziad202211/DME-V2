@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Save, Eye, ArrowLeft, Upload, Trash2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Service } from '@/types/supabase';
+import { uploadWebPVersion } from '@/lib/image-conversion';
 import '@/styles/admin-ds.css';
 
 export default function AdminServiceDetail() {
@@ -44,6 +45,7 @@ export default function AdminServiceDetail() {
         title: service.title, slug: service.slug,
         description: service.description || '', content: service.content || '',
         icon: service.icon || '', image_url: service.image_url || '',
+        webp_image_url: service.webp_image_url || '',
         featured: service.featured || false, order_index: service.order_index || 0
       };
       let error;
@@ -67,10 +69,31 @@ export default function AdminServiceDetail() {
   const handleImageUpload = async (file: File) => {
     try {
       const fileName = `service-${Date.now()}-${file.name}`;
+      
+      // Upload original image
       const { error } = await supabase.storage.from('service-images').upload(fileName, file);
       if (error) throw error;
       const { data: { publicUrl } } = supabase.storage.from('service-images').getPublicUrl(fileName);
-      set('image_url', publicUrl);
+
+      // Create and upload WebP version for better performance (wait for it)
+      try {
+        const webpResult = await uploadWebPVersion(
+          file,
+          'service-images',
+          fileName,
+          supabase,
+          { quality: 0.8, maxWidth: 1920, maxHeight: 1080 }
+        );
+        
+        // Set both original and WebP URLs
+        set('image_url', webpResult.webpUrl);
+        set('webp_image_url', webpResult.webpUrl);
+      } catch (webpError) {
+        console.warn('WebP conversion failed, using original:', webpError);
+        // Fallback to original URL if WebP conversion fails
+        set('image_url', publicUrl);
+        set('webp_image_url', publicUrl);
+      }
     } catch (e) { console.error(e); alert('Failed to upload image'); }
   };
 

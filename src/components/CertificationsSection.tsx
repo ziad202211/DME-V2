@@ -1,11 +1,13 @@
 import { Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 interface Certification {
   id: string;
   name: string;
   image_url: string | null;
+  webp_image_url?: string | null;
   order_index: number;
 }
 const BRAND = "#190ab0";
@@ -57,13 +59,12 @@ const CertificationsSection = () => {
                 key={cert.id}
                 className="group relative"
               >
-                <img 
+                <OptimizedImage 
                   src={cert.image_url || "/placeholder-certification.png"} 
+                  webpSrc={cert.webp_image_url}
                   alt={cert.name}
                   className="h-16 w-16 sm:h-20 sm:w-20 object-contain transition-transform duration-300 group-hover:scale-110 cursor-pointer"
-                  onError={(e) => {
-                    e.currentTarget.src = "/placeholder-certification.png";
-                  }}
+                  fallbackSrc="/placeholder-certification.png"
                 />
                 
               </div>

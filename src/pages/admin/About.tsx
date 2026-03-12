@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Save, Eye, ArrowLeft, Upload, Plus, Trash2, Edit } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { AboutContent, AboutSetting, AboutStatistic, TeamMember, AboutClient, AboutCertification } from '@/types/supabase';
+import { uploadWebPVersion, convertToWebP } from '@/lib/image-conversion';
 
 const DS = `
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
@@ -497,7 +498,22 @@ export default function AdminAbout() {
     setSaving(true);
     try {
       const table = type === 'content' ? 'about_content' : type === 'statistic' ? 'about_statistics' : type === 'team' ? 'team_members' : type === 'client' ? 'about_clients' : 'about_certifications';
-      const { error } = await supabase.from(table).upsert(item);
+      
+      // Prepare the update object with WebP URL
+      const updateData = { ...item };
+      
+      // Map WebP URLs based on type
+      if (type === 'content' && item.image_url) {
+        updateData.webp_image_url = item.image_url;
+      } else if (type === 'team' && item.photo_url) {
+        updateData.webp_photo_url = item.photo_url;
+      } else if (type === 'client' && item.logo_url) {
+        updateData.webp_logo_url = item.logo_url;
+      } else if (type === 'certification' && item.image_url) {
+        updateData.webp_image_url = item.image_url;
+      }
+      
+      const { error } = await supabase.from(table).upsert(updateData);
       if (error) throw error;
       await fetchData(); setEditingItem(null);
     } catch (e) { console.error(e); alert('Failed to save'); }
@@ -523,14 +539,36 @@ export default function AdminAbout() {
     finally { setSaving(false); }
   };
 
-  const handleImageUpload = async (file: File, itemId: string, imageType?: string) => {
+  const handleImageUpload = async (file: File, itemId: string, imageType?: string): Promise<string | null> => {
     try {
       const fileName = `about-${imageType ? imageType + '-' : ''}${itemId}-${Date.now()}-${file.name}`;
+      
+      // Upload original image
       const { error } = await supabase.storage.from('about-images').upload(fileName, file);
       if (error) throw error;
       const { data: { publicUrl } } = supabase.storage.from('about-images').getPublicUrl(fileName);
-      return publicUrl;
-    } catch (e) { alert('Failed to upload image'); return null; }
+
+      // Create and upload WebP version for better performance (wait for it)
+      try {
+        const webpResult = await uploadWebPVersion(
+          file,
+          'about-images',
+          fileName,
+          supabase,
+          { quality: 0.8, maxWidth: 1920, maxHeight: 1080 }
+        );
+        
+        // Return WebP URL for database storage
+        return webpResult.webpUrl;
+      } catch (webpError) {
+        console.warn('WebP conversion failed, using original:', webpError);
+        // Fallback to original URL if WebP conversion fails
+        return publicUrl;
+      }
+    } catch (e) { 
+      alert('Failed to upload image'); 
+      return null; 
+    }
   };
 
   const getContentBySection = (s: string) => content.filter(i => i.section === s);

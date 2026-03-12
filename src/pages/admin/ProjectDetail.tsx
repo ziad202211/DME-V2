@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Save, Eye, ArrowLeft, Upload, Trash2, Plus, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Project } from '@/types/supabase';
+import { uploadWebPVersion } from '@/lib/image-conversion';
 import '@/styles/admin-ds.css';
 
 const STATUS_COLOR: Record<string, string> = {
@@ -66,7 +67,8 @@ export default function AdminProjectDetail() {
         client: project.client || '', location: project.location || '',
         start_date: project.start_date || null, end_date: project.end_date || null,
         status: project.status || 'completed', featured: project.featured || false,
-        image_url: project.image_url || '', gallery: project.gallery || [], order_index: project.order_index || 0,
+        image_url: project.image_url || '', webp_image_url: project.webp_image_url || '',
+        gallery: project.gallery || [], order_index: project.order_index || 0,
         services: project.services || []
       };
       let error;
@@ -102,11 +104,38 @@ export default function AdminProjectDetail() {
   const handleImageUpload = async (file: File, type: 'main' | 'gallery') => {
     try {
       const fileName = `project-${type}-${Date.now()}-${file.name}`;
+      
+      // Upload original image
       const { error } = await supabase.storage.from('project-images').upload(fileName, file);
       if (error) throw error;
       const { data: { publicUrl } } = supabase.storage.from('project-images').getPublicUrl(fileName);
-      if (type === 'main') set('image_url', publicUrl);
-      else set('gallery', [...(project.gallery || []), publicUrl]);
+
+      // Create and upload WebP version for better performance (wait for it)
+      try {
+        const webpResult = await uploadWebPVersion(
+          file,
+          'project-images',
+          fileName,
+          supabase,
+          { quality: 0.8, maxWidth: 1920, maxHeight: 1080 }
+        );
+        
+        if (type === 'main') {
+          set('image_url', webpResult.webpUrl);
+          set('webp_image_url', webpResult.webpUrl);
+        } else {
+          set('gallery', [...(project.gallery || []), webpResult.webpUrl]);
+        }
+      } catch (webpError) {
+        console.warn('WebP conversion failed, using original:', webpError);
+        // Fallback to original URL if WebP conversion fails
+        if (type === 'main') {
+          set('image_url', publicUrl);
+          set('webp_image_url', publicUrl);
+        } else {
+          set('gallery', [...(project.gallery || []), publicUrl]);
+        }
+      }
     } catch (e) { console.error(e); alert('Failed to upload image'); }
   };
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Save, Eye, ArrowLeft, Upload } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { uploadWebPVersion } from '@/lib/image-conversion';
 import '@/styles/admin-ds.css';
 
 interface HomeContent {
@@ -11,11 +12,12 @@ interface HomeContent {
   hero_cta_text: string;
   hero_cta_link: string;
   hero_background_image: string;
+  webp_hero_background_image: string;
 }
 
 const DEFAULT: HomeContent = {
   hero_title: '', hero_subtitle: '', hero_description: '',
-  hero_cta_text: '', hero_cta_link: '', hero_background_image: ''
+  hero_cta_text: '', hero_cta_link: '', hero_background_image: '', webp_hero_background_image: ''
 };
 
 export default function AdminHome() {
@@ -51,10 +53,31 @@ export default function AdminHome() {
   const handleImageUpload = async (field: keyof HomeContent, file: File) => {
     try {
       const fileName = `${field}-${Date.now()}-${file.name}`;
+      
+      // Upload original image
       const { error } = await supabase.storage.from('home-images').upload(fileName, file);
       if (error) throw error;
       const { data: { publicUrl } } = supabase.storage.from('home-images').getPublicUrl(fileName);
-      set(field, publicUrl);
+
+      // Create and upload WebP version for better performance (wait for it)
+      try {
+        const webpResult = await uploadWebPVersion(
+          file,
+          'home-images',
+          fileName,
+          supabase,
+          { quality: 0.8, maxWidth: 1920, maxHeight: 1080 }
+        );
+        
+        // Set both original and WebP URLs
+        set(field as 'hero_background_image', publicUrl);
+        set('webp_hero_background_image', webpResult.webpUrl);
+      } catch (webpError) {
+        console.warn('WebP conversion failed, using original:', webpError);
+        // Fallback to original URL if WebP conversion fails
+        set(field as 'hero_background_image', publicUrl);
+        set('webp_hero_background_image', publicUrl);
+      }
     } catch (e) { console.error(e); alert('Failed to upload image'); }
   };
 
