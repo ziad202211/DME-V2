@@ -46,13 +46,60 @@ export default function AdminServices() {
 
   return (
     <div className="ds-root">
+      <style>{`
+        .svc-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .svc-table-wrap table { min-width: 600px; width: 100%; border-collapse: collapse; font-size: 13px; }
+
+        /* Mobile card list */
+        .svc-card-list { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px 16px; }
+        .svc-card {
+          background: var(--bg-3); border: 1px solid var(--border);
+          border-radius: 10px; padding: 14px;
+          transition: border-color 0.15s;
+        }
+        .svc-card:hover { border-color: var(--border-2); }
+        .svc-card-top {
+          display: flex; align-items: flex-start;
+          justify-content: space-between; gap: 10px; margin-bottom: 8px;
+        }
+        .svc-card-title-wrap { display: flex; align-items: center; gap: 8px; }
+        .svc-card-icon { font-size: 18px; flex-shrink: 0; }
+        .svc-card-title { font-size: 14px; font-weight: 600; color: var(--text); }
+        .svc-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+        .svc-card-meta {
+          display: flex; flex-wrap: wrap; gap: 6px;
+          align-items: center; margin-bottom: 10px;
+        }
+        .svc-card-meta-item {
+          font-size: 11px; color: var(--muted);
+          font-family: 'DM Mono', monospace;
+        }
+        .svc-card-meta-dot {
+          width: 3px; height: 3px; border-radius: 50%;
+          background: var(--border-2); flex-shrink: 0;
+        }
+
+        @media (max-width: 767px) {
+          .svc-table-wrap { display: none; }
+          .svc-card-list  { display: flex; }
+        }
+        @media (min-width: 768px) {
+          .svc-table-wrap { display: block; }
+          .svc-card-list  { display: none; }
+        }
+      `}</style>
+
       <header className="ds-header">
         <div className="ds-header-left">
-          <button className="ds-back" onClick={() => navigate('/admin/dashboard')}><ArrowLeft size={13} /> Back</button>
+          <button className="ds-back" onClick={() => navigate('/admin/dashboard')}>
+            <ArrowLeft size={13} /> <span className="ds-back-label">Back</span>
+          </button>
           <div className="ds-header-divider" />
           <span className="ds-header-title">Services</span>
         </div>
-        <button className="ds-add-btn" onClick={() => navigate('/admin/services/new')}><Plus size={13} /> Add Service</button>
+        <button className="ds-add-btn" onClick={() => navigate('/admin/services/new')}>
+          <Plus size={13} /> <span>Add Service</span>
+        </button>
       </header>
 
       <main className="ds-main">
@@ -60,8 +107,8 @@ export default function AdminServices() {
         <div className="ds-page-sub">Manage your service offerings.</div>
 
         {/* Search */}
-        <div style={{ position: 'relative', marginBottom: 20 }}>
-          <Search size={13} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
+        <div className="ds-search-wrap">
+          <Search size={13} className="ds-search-icon" />
           <input
             className="ds-input"
             style={{ paddingLeft: 34 }}
@@ -71,7 +118,6 @@ export default function AdminServices() {
           />
         </div>
 
-        {/* Table */}
         <div className="ds-panel">
           <div className="ds-panel-header">
             <div>
@@ -80,8 +126,9 @@ export default function AdminServices() {
             </div>
           </div>
 
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          {/* ── Desktop table ── */}
+          <div className="svc-table-wrap">
+            <table>
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--border)' }}>
                   {['Title', 'Slug', 'Featured', 'Order', 'Created', 'Actions'].map(h => (
@@ -91,9 +138,12 @@ export default function AdminServices() {
               </thead>
               <tbody>
                 {filtered.map(service => (
-                  <tr key={service.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.15s' }}
+                  <tr
+                    key={service.id}
+                    style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.15s' }}
                     onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-3)')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  >
                     <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text)' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         {service.icon && <span style={{ fontSize: 15 }}>{service.icon}</span>}
@@ -119,6 +169,38 @@ export default function AdminServices() {
                 ))}
               </tbody>
             </table>
+            {filtered.length === 0 && <div className="ds-empty">No services found.</div>}
+          </div>
+
+          {/* ── Mobile cards ── */}
+          <div className="svc-card-list">
+            {filtered.map(service => (
+              <div key={service.id} className="svc-card">
+                <div className="svc-card-top">
+                  <div className="svc-card-title-wrap">
+                    {service.icon && <span className="svc-card-icon">{service.icon}</span>}
+                    <span className="svc-card-title">{service.title}</span>
+                  </div>
+                  <div className="svc-card-actions">
+                    <button className="ds-icon-btn edit" onClick={() => navigate(`/services/${service.slug}`)} title="Preview"><Eye size={13} /></button>
+                    <button className="ds-icon-btn edit" onClick={() => navigate(`/admin/services/edit/${service.id}`)} title="Edit"><Edit size={13} /></button>
+                    <button className="ds-icon-btn" onClick={() => handleDelete(service.id)} title="Delete"><Trash2 size={13} /></button>
+                  </div>
+                </div>
+
+                <div className="svc-card-meta">
+                  <span className="svc-card-meta-item">{service.slug}</span>
+                  <span className="svc-card-meta-dot" />
+                  <span className="svc-card-meta-item">order: {service.order_index}</span>
+                  <span className="svc-card-meta-dot" />
+                  <span className="svc-card-meta-item">{fmtDate(service.created_at)}</span>
+                </div>
+
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 20, fontSize: 11, fontFamily: 'DM Mono, monospace', background: service.featured ? 'rgba(245,158,11,0.12)' : 'var(--bg-3)', color: service.featured ? 'var(--accent)' : 'var(--muted)', border: `1px solid ${service.featured ? 'rgba(245,158,11,0.3)' : 'var(--border)'}` }}>
+                  {service.featured && <Star size={10} />}{service.featured ? 'Featured' : 'Regular'}
+                </span>
+              </div>
+            ))}
             {filtered.length === 0 && <div className="ds-empty">No services found.</div>}
           </div>
         </div>

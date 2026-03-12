@@ -6,8 +6,8 @@ import { Project } from '@/types/supabase';
 import '@/styles/admin-ds.css';
 
 export default function AdminProjects() {
-  const [projects, setProjects]   = useState<Project[]>([]);
-  const [loading, setLoading]     = useState(true);
+  const [projects, setProjects]     = useState<Project[]>([]);
+  const [loading, setLoading]       = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
@@ -51,13 +51,48 @@ export default function AdminProjects() {
 
   return (
     <div className="ds-root">
+      <style>{`
+        .proj-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .proj-table-wrap table { min-width: 700px; width: 100%; border-collapse: collapse; font-size: 13px; }
+
+        /* Mobile card list — shown below 768px */
+        .proj-card-list { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px 16px; }
+        .proj-card {
+          background: var(--bg-3); border: 1px solid var(--border);
+          border-radius: 10px; padding: 14px;
+          transition: border-color 0.15s;
+        }
+        .proj-card:hover { border-color: var(--border-2); }
+        .proj-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+        .proj-card-title { font-size: 14px; font-weight: 600; color: var(--text); }
+        .proj-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+        .proj-card-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; }
+        .proj-card-meta-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+        .proj-card-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        @media (max-width: 767px) {
+          .proj-table-wrap { display: none; }
+          .proj-card-list { display: flex; }
+        }
+        @media (min-width: 768px) {
+          .proj-table-wrap { display: block; }
+          .proj-card-list { display: none; }
+        }
+      `}</style>
+
       <header className="ds-header">
         <div className="ds-header-left">
-          <button className="ds-back" onClick={() => navigate('/admin/dashboard')}><ArrowLeft size={13} /> Back</button>
+          <button className="ds-back" onClick={() => navigate('/admin/dashboard')}>
+            <ArrowLeft size={13} />
+            <span className="ds-back-label">Back</span>
+          </button>
           <div className="ds-header-divider" />
           <span className="ds-header-title">Projects</span>
         </div>
-        <button className="ds-add-btn" onClick={() => navigate('/admin/projects/new')}><Plus size={13} /> Add Project</button>
+        <button className="ds-add-btn" onClick={() => navigate('/admin/projects/new')}>
+          <Plus size={13} />
+          <span>Add Project</span>
+        </button>
       </header>
 
       <main className="ds-main">
@@ -65,8 +100,8 @@ export default function AdminProjects() {
         <div className="ds-page-sub">Manage your project portfolio.</div>
 
         {/* Search */}
-        <div style={{ position: 'relative', marginBottom: 20 }}>
-          <Search size={13} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
+        <div className="ds-search-wrap">
+          <Search size={13} className="ds-search-icon" />
           <input
             className="ds-input"
             style={{ paddingLeft: 34 }}
@@ -76,7 +111,6 @@ export default function AdminProjects() {
           />
         </div>
 
-        {/* Table */}
         <div className="ds-panel">
           <div className="ds-panel-header">
             <div>
@@ -85,8 +119,9 @@ export default function AdminProjects() {
             </div>
           </div>
 
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          {/* ── Desktop table ── */}
+          <div className="proj-table-wrap">
+            <table>
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--border)' }}>
                   {['Title', 'Client', 'Location', 'Status', 'Featured', 'Created', 'Actions'].map(h => (
@@ -96,13 +131,18 @@ export default function AdminProjects() {
               </thead>
               <tbody>
                 {filtered.map(project => (
-                  <tr key={project.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.15s' }}
+                  <tr
+                    key={project.id}
+                    style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.15s' }}
                     onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-3)')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  >
                     <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text)' }}>{project.title}</td>
                     <td style={{ padding: '12px 16px', color: 'var(--muted)' }}>{project.client || '—'}</td>
                     <td style={{ padding: '12px 16px', color: 'var(--muted)' }}>
-                      {project.location ? <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={11} />{project.location}</span> : '—'}
+                      {project.location
+                        ? <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={11} />{project.location}</span>
+                        : '—'}
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 20, fontSize: 11, fontFamily: 'DM Mono, monospace', background: `${statusColor(project.status)}22`, color: statusColor(project.status), border: `1px solid ${statusColor(project.status)}44` }}>
@@ -128,6 +168,42 @@ export default function AdminProjects() {
                 ))}
               </tbody>
             </table>
+            {filtered.length === 0 && <div className="ds-empty">No projects found.</div>}
+          </div>
+
+          {/* ── Mobile cards ── */}
+          <div className="proj-card-list">
+            {filtered.map(project => (
+              <div key={project.id} className="proj-card">
+                <div className="proj-card-top">
+                  <div className="proj-card-title">{project.title}</div>
+                  <div className="proj-card-actions">
+                    <button className="ds-icon-btn edit" onClick={() => navigate(`/projects/${project.slug}`)} title="Preview"><Eye size={13} /></button>
+                    <button className="ds-icon-btn edit" onClick={() => navigate(`/admin/projects/edit/${project.id}`)} title="Edit"><Edit size={13} /></button>
+                    <button className="ds-icon-btn" onClick={() => handleDelete(project.id)} title="Delete"><Trash2 size={13} /></button>
+                  </div>
+                </div>
+
+                <div className="proj-card-meta">
+                  {project.client && (
+                    <span className="proj-card-meta-item">{project.client}</span>
+                  )}
+                  {project.location && (
+                    <span className="proj-card-meta-item"><MapPin size={10} />{project.location}</span>
+                  )}
+                  <span className="proj-card-meta-item"><Calendar size={10} />{fmtDate(project.created_at)}</span>
+                </div>
+
+                <div className="proj-card-badges">
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 20, fontSize: 11, fontFamily: 'DM Mono, monospace', background: `${statusColor(project.status)}22`, color: statusColor(project.status), border: `1px solid ${statusColor(project.status)}44` }}>
+                    {project.status}
+                  </span>
+                  <span style={{ display: 'inline-flex', padding: '3px 10px', borderRadius: 20, fontSize: 11, fontFamily: 'DM Mono, monospace', background: project.featured ? 'rgba(245,158,11,0.12)' : 'var(--bg-3)', color: project.featured ? 'var(--accent)' : 'var(--muted)', border: `1px solid ${project.featured ? 'rgba(245,158,11,0.3)' : 'var(--border)'}` }}>
+                    {project.featured ? 'Featured' : 'Regular'}
+                  </span>
+                </div>
+              </div>
+            ))}
             {filtered.length === 0 && <div className="ds-empty">No projects found.</div>}
           </div>
         </div>

@@ -32,7 +32,8 @@ export default function AdminServiceDetail() {
   const set = (field: keyof Service, value: any) =>
     setService(prev => ({ ...prev, [field]: value }));
 
-  const generateSlug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const generateSlug = (t: string) =>
+    t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
   const handleTitleChange = (title: string) =>
     setService(prev => ({ ...prev, title, slug: prev.slug || generateSlug(title) }));
@@ -69,28 +70,14 @@ export default function AdminServiceDetail() {
   const handleImageUpload = async (file: File) => {
     try {
       const fileName = `service-${Date.now()}-${file.name}`;
-      
-      // Upload original image
       const { error } = await supabase.storage.from('service-images').upload(fileName, file);
       if (error) throw error;
       const { data: { publicUrl } } = supabase.storage.from('service-images').getPublicUrl(fileName);
-
-      // Create and upload WebP version for better performance (wait for it)
       try {
-        const webpResult = await uploadWebPVersion(
-          file,
-          'service-images',
-          fileName,
-          supabase,
-          { quality: 0.8, maxWidth: 1920, maxHeight: 1080 }
-        );
-        
-        // Set both original and WebP URLs
+        const webpResult = await uploadWebPVersion(file, 'service-images', fileName, supabase, { quality: 0.8, maxWidth: 1920, maxHeight: 1080 });
         set('image_url', webpResult.webpUrl);
         set('webp_image_url', webpResult.webpUrl);
-      } catch (webpError) {
-        console.warn('WebP conversion failed, using original:', webpError);
-        // Fallback to original URL if WebP conversion fails
+      } catch {
         set('image_url', publicUrl);
         set('webp_image_url', publicUrl);
       }
@@ -105,22 +92,74 @@ export default function AdminServiceDetail() {
 
   return (
     <div className="ds-root">
+      <style>{`
+        .svc-detail-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 20px;
+          align-items: start;
+        }
+        @media (min-width: 1024px) {
+          .svc-detail-grid { grid-template-columns: 1fr 300px; }
+        }
+        .svc-detail-left  { display: flex; flex-direction: column; gap: 20px; }
+        .svc-detail-right { display: flex; flex-direction: column; gap: 20px; }
+
+        .svc-header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+        .svc-delete-btn {
+          display: flex; align-items: center; gap: 6px;
+          padding: 6px 10px; border-radius: 8px;
+          border: 1px solid rgba(239,68,68,0.4);
+          background: rgba(239,68,68,0.08);
+          color: var(--red); font-size: 12px; cursor: pointer;
+          font-family: 'DM Mono', monospace; white-space: nowrap;
+        }
+        @media (min-width: 640px) { .svc-delete-btn { padding: 6px 14px; font-size: 13px; } }
+        .svc-delete-btn:hover { background: rgba(239,68,68,0.14); }
+
+        .svc-delete-label { display: none; }
+        @media (min-width: 480px) { .svc-delete-label { display: inline; } }
+
+        .svc-settings-body {
+          padding: 16px;
+          display: flex; flex-direction: column; gap: 16px;
+        }
+        @media (min-width: 640px) { .svc-settings-body { padding: 16px 22px; } }
+
+        .svc-preview-body { padding: 14px; }
+        @media (min-width: 640px) { .svc-preview-body { padding: 16px 22px; } }
+
+        .svc-toggle-wrap {
+          display: flex; align-items: center;
+          justify-content: space-between; gap: 12px;
+        }
+      `}</style>
+
+      {/* Header */}
       <header className="ds-header">
         <div className="ds-header-left">
-          <button className="ds-back" onClick={() => navigate('/admin/services')}><ArrowLeft size={13} /> Back</button>
+          <button className="ds-back" onClick={() => navigate('/admin/services')}>
+            <ArrowLeft size={13} /> <span className="ds-back-label">Back</span>
+          </button>
           <div className="ds-header-divider" />
           <span className="ds-header-title">{isEditing ? 'Edit Service' : 'New Service'}</span>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
+
+        <div className="svc-header-actions">
           {service.slug && (
-            <button className="ds-preview" onClick={() => window.open(`/services/${service.slug}`, '_blank')}><Eye size={13} /> Preview</button>
-          )}
-          {isEditing && (
-            <button onClick={handleDelete} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 8, border: '1px solid rgba(239,68,68,0.4)', background: 'rgba(239,68,68,0.08)', color: 'var(--red)', fontSize: 13, cursor: 'pointer', fontFamily: 'DM Mono, monospace' }}>
-              <Trash2 size={13} /> Delete
+            <button className="ds-preview" onClick={() => window.open(`/services/${service.slug}`, '_blank')}>
+              <Eye size={13} /> <span className="ds-back-label">Preview</span>
             </button>
           )}
-          <button className="ds-save-btn" disabled={saving} onClick={handleSave}><Save size={13} /> {saving ? 'Saving…' : 'Save'}</button>
+          {isEditing && (
+            <button className="svc-delete-btn" onClick={handleDelete}>
+              <Trash2 size={13} /> <span className="svc-delete-label">Delete</span>
+            </button>
+          )}
+          <button className="ds-save-btn" disabled={saving} onClick={handleSave}>
+            <Save size={13} /> {saving ? 'Saving…' : 'Save'}
+          </button>
         </div>
       </header>
 
@@ -128,17 +167,20 @@ export default function AdminServiceDetail() {
         <div className="ds-page-title">{isEditing ? 'Edit Service' : 'Create New Service'}</div>
         <div className="ds-page-sub">{isEditing ? 'Update service details below.' : 'Fill in the details for your new service.'}</div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
+        <div className="svc-detail-grid">
 
-          {/* Left column */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* ── Left column ── */}
+          <div className="svc-detail-left">
 
             {/* Basic Info */}
             <div className="ds-panel">
               <div className="ds-panel-header">
-                <div><div className="ds-panel-title">Basic Information</div><div className="ds-panel-desc">Service title and content</div></div>
+                <div>
+                  <div className="ds-panel-title">Basic Information</div>
+                  <div className="ds-panel-desc">Service title and content</div>
+                </div>
               </div>
-              <div className="ds-edit-form" style={{ margin: '20px 22px' }}>
+              <div className="ds-edit-form" style={{ margin: '16px' }}>
                 <div className="ds-form-grid">
                   <div className="ds-field" style={{ marginBottom: 0 }}>
                     <label className="ds-label">Service Title *</label>
@@ -163,9 +205,12 @@ export default function AdminServiceDetail() {
             {/* Media */}
             <div className="ds-panel">
               <div className="ds-panel-header">
-                <div><div className="ds-panel-title">Media</div><div className="ds-panel-desc">Service images and icon</div></div>
+                <div>
+                  <div className="ds-panel-title">Media</div>
+                  <div className="ds-panel-desc">Service images and icon</div>
+                </div>
               </div>
-              <div className="ds-edit-form" style={{ margin: '20px 22px' }}>
+              <div className="ds-edit-form" style={{ margin: '16px' }}>
                 <div className="ds-field">
                   <label className="ds-label">Icon (optional)</label>
                   <input className="ds-input" value={service.icon || ''} onChange={e => set('icon', e.target.value)} placeholder="Emoji or icon name e.g. ⚙️" />
@@ -177,7 +222,9 @@ export default function AdminServiceDetail() {
                     <input className="ds-input" value={service.image_url || ''} onChange={e => set('image_url', e.target.value)} placeholder="Image URL or upload" />
                     <input type="file" accept="image/*" id="image_upload" style={{ display: 'none' }}
                       onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }} />
-                    <button className="ds-upload-btn" onClick={() => document.getElementById('image_upload')?.click()}><Upload size={13} /> Upload</button>
+                    <button className="ds-upload-btn" onClick={() => document.getElementById('image_upload')?.click()}>
+                      <Upload size={13} /> Upload
+                    </button>
                   </div>
                   {service.image_url && (
                     <div className="ds-img-preview">
@@ -189,23 +236,26 @@ export default function AdminServiceDetail() {
             </div>
           </div>
 
-          {/* Right sidebar */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* ── Right sidebar ── */}
+          <div className="svc-detail-right">
 
             {/* Settings */}
             <div className="ds-panel">
               <div className="ds-panel-header">
-                <div><div className="ds-panel-title">Settings</div><div className="ds-panel-desc">Service configuration</div></div>
+                <div>
+                  <div className="ds-panel-title">Settings</div>
+                  <div className="ds-panel-desc">Service configuration</div>
+                </div>
               </div>
-              <div style={{ padding: '16px 22px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div className="svc-settings-body">
+                <div className="svc-toggle-wrap">
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>Featured Service</div>
                     <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>Display this service prominently</div>
                   </div>
                   <button
                     onClick={() => set('featured', !service.featured)}
-                    style={{ width: 40, height: 22, borderRadius: 11, border: 'none', cursor: 'pointer', transition: 'background 0.2s', background: service.featured ? 'var(--accent)' : 'var(--border)', position: 'relative' }}>
+                    style={{ width: 40, height: 22, borderRadius: 11, border: 'none', cursor: 'pointer', transition: 'background 0.2s', background: service.featured ? 'var(--accent)' : 'var(--border)', position: 'relative', flexShrink: 0 }}>
                     <span style={{ position: 'absolute', top: 3, left: service.featured ? 21 : 3, width: 16, height: 16, borderRadius: '50%', background: '#fff', transition: 'left 0.2s' }} />
                   </button>
                 </div>
@@ -220,12 +270,15 @@ export default function AdminServiceDetail() {
             {/* Preview */}
             <div className="ds-panel">
               <div className="ds-panel-header">
-                <div><div className="ds-panel-title">Preview</div><div className="ds-panel-desc">How this service will appear</div></div>
+                <div>
+                  <div className="ds-panel-title">Preview</div>
+                  <div className="ds-panel-desc">How this service will appear</div>
+                </div>
               </div>
-              <div style={{ padding: '16px 22px' }}>
+              <div className="svc-preview-body">
                 <div style={{ borderRadius: 10, padding: 14, background: 'var(--bg-3)', border: '1px solid var(--border)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                    <div style={{ width: 34, height: 34, borderRadius: 8, background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>
+                    <div style={{ width: 34, height: 34, borderRadius: 8, background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>
                       {service.icon || '📋'}
                     </div>
                     <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--text)' }}>{service.title || 'Service Title'}</span>

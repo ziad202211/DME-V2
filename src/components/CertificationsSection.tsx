@@ -27,7 +27,7 @@ const CertificationsSection = () => {
     queryFn: fetchCertifications,
   });
   return (
-    <section className="bg-muted sm:py-12">
+    <section className="bg-muted py-8 sm:py-12 md:py-16 lg:py-20">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="mb-8 sm:mb-12 text-center">
           

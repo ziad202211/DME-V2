@@ -52,7 +52,8 @@ export default function AdminProjectDetail() {
   const set = (field: keyof Project, value: any) =>
     setProject(prev => ({ ...prev, [field]: value }));
 
-  const generateSlug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const generateSlug = (t: string) =>
+    t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
   const handleTitleChange = (title: string) =>
     setProject(prev => ({ ...prev, title, slug: prev.slug || generateSlug(title) }));
@@ -77,14 +78,18 @@ export default function AdminProjectDetail() {
         if (!error) {
           await supabase.from('project_services').delete().eq('project_id', id);
           if (projectServices.length > 0)
-            await supabase.from('project_services').insert(projectServices.map(s => ({ project_id: id!, service_id: s })));
+            await supabase.from('project_services').insert(
+              projectServices.map(s => ({ project_id: id!, service_id: s }))
+            );
         }
       } else {
         const result = await supabase.from('projects').insert(payload).select();
         error = result.error;
         const newId = (result.data as any)?.[0]?.id;
         if (!error && newId && projectServices.length > 0)
-          await supabase.from('project_services').insert(projectServices.map(s => ({ project_id: newId, service_id: s })));
+          await supabase.from('project_services').insert(
+            projectServices.map(s => ({ project_id: newId, service_id: s }))
+          );
       }
       if (error) throw error;
       navigate('/admin/projects');
@@ -104,37 +109,16 @@ export default function AdminProjectDetail() {
   const handleImageUpload = async (file: File, type: 'main' | 'gallery') => {
     try {
       const fileName = `project-${type}-${Date.now()}-${file.name}`;
-      
-      // Upload original image
       const { error } = await supabase.storage.from('project-images').upload(fileName, file);
       if (error) throw error;
       const { data: { publicUrl } } = supabase.storage.from('project-images').getPublicUrl(fileName);
-
-      // Create and upload WebP version for better performance (wait for it)
       try {
-        const webpResult = await uploadWebPVersion(
-          file,
-          'project-images',
-          fileName,
-          supabase,
-          { quality: 0.8, maxWidth: 1920, maxHeight: 1080 }
-        );
-        
-        if (type === 'main') {
-          set('image_url', webpResult.webpUrl);
-          set('webp_image_url', webpResult.webpUrl);
-        } else {
-          set('gallery', [...(project.gallery || []), webpResult.webpUrl]);
-        }
-      } catch (webpError) {
-        console.warn('WebP conversion failed, using original:', webpError);
-        // Fallback to original URL if WebP conversion fails
-        if (type === 'main') {
-          set('image_url', publicUrl);
-          set('webp_image_url', publicUrl);
-        } else {
-          set('gallery', [...(project.gallery || []), publicUrl]);
-        }
+        const webpResult = await uploadWebPVersion(file, 'project-images', fileName, supabase, { quality: 0.8, maxWidth: 1920, maxHeight: 1080 });
+        if (type === 'main') { set('image_url', webpResult.webpUrl); set('webp_image_url', webpResult.webpUrl); }
+        else { set('gallery', [...(project.gallery || []), webpResult.webpUrl]); }
+      } catch {
+        if (type === 'main') { set('image_url', publicUrl); set('webp_image_url', publicUrl); }
+        else { set('gallery', [...(project.gallery || []), publicUrl]); }
       }
     } catch (e) { console.error(e); alert('Failed to upload image'); }
   };
@@ -153,22 +137,89 @@ export default function AdminProjectDetail() {
 
   return (
     <div className="ds-root">
+      <style>{`
+        .proj-detail-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 20px;
+          align-items: start;
+        }
+        @media (min-width: 1024px) {
+          .proj-detail-grid { grid-template-columns: 1fr 300px; }
+        }
+        .proj-detail-left  { display: flex; flex-direction: column; gap: 20px; }
+        .proj-detail-right { display: flex; flex-direction: column; gap: 20px; }
+
+        .proj-header-actions {
+          display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+        }
+        .proj-delete-btn {
+          display: flex; align-items: center; gap: 6px;
+          padding: 6px 10px; border-radius: 8px;
+          border: 1px solid rgba(239,68,68,0.4);
+          background: rgba(239,68,68,0.08);
+          color: var(--red); font-size: 12px; cursor: pointer;
+          font-family: 'DM Mono, monospace';
+          white-space: nowrap;
+        }
+        @media (min-width: 640px) {
+          .proj-delete-btn { padding: 6px 14px; font-size: 13px; }
+        }
+        .proj-delete-btn:hover { background: rgba(239,68,68,0.14); }
+
+        /* Hide delete label on very small screens */
+        .proj-delete-label { display: none; }
+        @media (min-width: 480px) { .proj-delete-label { display: inline; } }
+
+        .proj-toggle-wrap {
+          display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        }
+        .proj-settings-body {
+          padding: 16px;
+          display: flex; flex-direction: column; gap: 16px;
+        }
+        @media (min-width: 640px) { .proj-settings-body { padding: 16px 22px; } }
+
+        .proj-services-body {
+          padding: 12px 14px 16px;
+          display: flex; flex-direction: column; gap: 8px;
+        }
+        @media (min-width: 640px) { .proj-services-body { padding: 12px 22px 16px; } }
+
+        .proj-preview-body { padding: 14px; }
+        @media (min-width: 640px) { .proj-preview-body { padding: 16px 22px; } }
+
+        .gallery-item {
+          display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        }
+        @media (min-width: 480px) { .gallery-item { flex-wrap: nowrap; } }
+        .gallery-item .ds-input { flex: 1; min-width: 0; }
+      `}</style>
+
+      {/* Header */}
       <header className="ds-header">
         <div className="ds-header-left">
-          <button className="ds-back" onClick={() => navigate('/admin/projects')}><ArrowLeft size={13} /> Back</button>
+          <button className="ds-back" onClick={() => navigate('/admin/projects')}>
+            <ArrowLeft size={13} /> <span className="ds-back-label">Back</span>
+          </button>
           <div className="ds-header-divider" />
           <span className="ds-header-title">{isEditing ? 'Edit Project' : 'New Project'}</span>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
+
+        <div className="proj-header-actions">
           {project.slug && (
-            <button className="ds-preview" onClick={() => window.open(`/projects/${project.slug}`, '_blank')}><Eye size={13} /> Preview</button>
-          )}
-          {isEditing && (
-            <button onClick={handleDelete} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 8, border: '1px solid rgba(239,68,68,0.4)', background: 'rgba(239,68,68,0.08)', color: 'var(--red)', fontSize: 13, cursor: 'pointer', fontFamily: 'DM Mono, monospace' }}>
-              <Trash2 size={13} /> Delete
+            <button className="ds-preview" onClick={() => window.open(`/projects/${project.slug}`, '_blank')}>
+              <Eye size={13} /> <span className="ds-back-label">Preview</span>
             </button>
           )}
-          <button className="ds-save-btn" disabled={saving} onClick={handleSave}><Save size={13} /> {saving ? 'Saving…' : 'Save'}</button>
+          {isEditing && (
+            <button className="proj-delete-btn" onClick={handleDelete}>
+              <Trash2 size={13} /> <span className="proj-delete-label">Delete</span>
+            </button>
+          )}
+          <button className="ds-save-btn" disabled={saving} onClick={handleSave}>
+            <Save size={13} /> {saving ? 'Saving…' : 'Save'}
+          </button>
         </div>
       </header>
 
@@ -176,17 +227,20 @@ export default function AdminProjectDetail() {
         <div className="ds-page-title">{isEditing ? 'Edit Project' : 'Create New Project'}</div>
         <div className="ds-page-sub">{isEditing ? 'Update project details below.' : 'Fill in the details for your new project.'}</div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
+        <div className="proj-detail-grid">
 
-          {/* Left column */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* ── Left column ── */}
+          <div className="proj-detail-left">
 
             {/* Basic Info */}
             <div className="ds-panel">
               <div className="ds-panel-header">
-                <div><div className="ds-panel-title">Basic Information</div><div className="ds-panel-desc">Project title and content</div></div>
+                <div>
+                  <div className="ds-panel-title">Basic Information</div>
+                  <div className="ds-panel-desc">Project title and content</div>
+                </div>
               </div>
-              <div className="ds-edit-form" style={{ margin: '20px 22px' }}>
+              <div className="ds-edit-form" style={{ margin: '16px' }}>
                 <div className="ds-form-grid">
                   <div className="ds-field" style={{ marginBottom: 0 }}>
                     <label className="ds-label">Project Title *</label>
@@ -211,9 +265,12 @@ export default function AdminProjectDetail() {
             {/* Project Details */}
             <div className="ds-panel">
               <div className="ds-panel-header">
-                <div><div className="ds-panel-title">Project Details</div><div className="ds-panel-desc">Client, location, and timeline</div></div>
+                <div>
+                  <div className="ds-panel-title">Project Details</div>
+                  <div className="ds-panel-desc">Client, location, and timeline</div>
+                </div>
               </div>
-              <div className="ds-edit-form" style={{ margin: '20px 22px' }}>
+              <div className="ds-edit-form" style={{ margin: '16px' }}>
                 <div className="ds-form-grid">
                   <div className="ds-field" style={{ marginBottom: 0 }}>
                     <label className="ds-label">Client</label>
@@ -236,8 +293,7 @@ export default function AdminProjectDetail() {
                 </div>
                 <div className="ds-field" style={{ marginTop: 14 }}>
                   <label className="ds-label">Status</label>
-                  <select className="ds-input" value={project.status || 'completed'} onChange={e => set('status', e.target.value)}
-                    style={{ appearance: 'none', cursor: 'pointer' }}>
+                  <select className="ds-input" value={project.status || 'completed'} onChange={e => set('status', e.target.value)} style={{ appearance: 'none', cursor: 'pointer' }}>
                     <option value="planned">Planned</option>
                     <option value="ongoing">Ongoing</option>
                     <option value="completed">Completed</option>
@@ -248,38 +304,27 @@ export default function AdminProjectDetail() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {(project.services || []).map((service, index) => (
                       <div key={index} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <input 
-                          className="ds-input" 
+                        <input
+                          className="ds-input"
                           value={service}
                           onChange={e => {
-                            const newServices = [...(project.services || [])];
-                            newServices[index] = e.target.value;
-                            set('services', newServices);
+                            const ns = [...(project.services || [])];
+                            ns[index] = e.target.value;
+                            set('services', ns);
                           }}
                           placeholder="Enter service name"
                           style={{ flex: 1 }}
                         />
-                        <button 
-                          className="ds-icon-btn" 
-                          onClick={() => {
-                            const newServices = [...(project.services || [])];
-                            newServices.splice(index, 1);
-                            set('services', newServices);
-                          }}
-                          title="Remove service"
-                        >
+                        <button className="ds-icon-btn" onClick={() => {
+                          const ns = [...(project.services || [])];
+                          ns.splice(index, 1);
+                          set('services', ns);
+                        }} title="Remove service">
                           <X size={13} />
                         </button>
                       </div>
                     ))}
-                    <button 
-                      className="ds-add-btn" 
-                      onClick={() => {
-                        const newServices = [...(project.services || []), ''];
-                        set('services', newServices);
-                      }}
-                      style={{ marginTop: 4 }}
-                    >
+                    <button className="ds-add-btn" style={{ marginTop: 4 }} onClick={() => set('services', [...(project.services || []), ''])}>
                       <Plus size={13} /> Add Service
                     </button>
                   </div>
@@ -291,16 +336,21 @@ export default function AdminProjectDetail() {
             {/* Media */}
             <div className="ds-panel">
               <div className="ds-panel-header">
-                <div><div className="ds-panel-title">Media</div><div className="ds-panel-desc">Project images and gallery</div></div>
+                <div>
+                  <div className="ds-panel-title">Media</div>
+                  <div className="ds-panel-desc">Project images and gallery</div>
+                </div>
               </div>
-              <div className="ds-edit-form" style={{ margin: '20px 22px' }}>
+              <div className="ds-edit-form" style={{ margin: '16px' }}>
                 <div className="ds-field">
                   <label className="ds-label">Main Project Image</label>
                   <div className="ds-input-row">
                     <input className="ds-input" value={project.image_url || ''} onChange={e => set('image_url', e.target.value)} placeholder="Image URL or upload" />
                     <input type="file" accept="image/*" id="main_image_upload" style={{ display: 'none' }}
                       onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f, 'main'); }} />
-                    <button className="ds-upload-btn" onClick={() => document.getElementById('main_image_upload')?.click()}><Upload size={13} /> Upload</button>
+                    <button className="ds-upload-btn" onClick={() => document.getElementById('main_image_upload')?.click()}>
+                      <Upload size={13} /> Upload
+                    </button>
                   </div>
                   {project.image_url && (
                     <div className="ds-img-preview">
@@ -313,8 +363,8 @@ export default function AdminProjectDetail() {
                   <label className="ds-label">Gallery</label>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {(project.gallery || []).map((img, i) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <img src={img} alt={`Gallery ${i + 1}`} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)', flexShrink: 0 }} />
+                      <div key={i} className="gallery-item">
+                        <img src={img} alt={`Gallery ${i + 1}`} style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)', flexShrink: 0 }} />
                         <input className="ds-input" value={img} onChange={e => {
                           const g = [...(project.gallery || [])];
                           g[i] = e.target.value;
@@ -326,7 +376,9 @@ export default function AdminProjectDetail() {
                     <div>
                       <input type="file" accept="image/*" id="gallery_upload" style={{ display: 'none' }}
                         onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f, 'gallery'); }} />
-                      <button className="ds-add-btn" onClick={() => document.getElementById('gallery_upload')?.click()}><Plus size={13} /> Add to Gallery</button>
+                      <button className="ds-add-btn" onClick={() => document.getElementById('gallery_upload')?.click()}>
+                        <Plus size={13} /> Add to Gallery
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -334,23 +386,26 @@ export default function AdminProjectDetail() {
             </div>
           </div>
 
-          {/* Right sidebar */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* ── Right sidebar ── */}
+          <div className="proj-detail-right">
 
             {/* Settings */}
             <div className="ds-panel">
               <div className="ds-panel-header">
-                <div><div className="ds-panel-title">Settings</div><div className="ds-panel-desc">Project configuration</div></div>
+                <div>
+                  <div className="ds-panel-title">Settings</div>
+                  <div className="ds-panel-desc">Project configuration</div>
+                </div>
               </div>
-              <div style={{ padding: '16px 22px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div className="proj-settings-body">
+                <div className="proj-toggle-wrap">
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>Featured Project</div>
                     <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>Display this project prominently</div>
                   </div>
                   <button
                     onClick={() => set('featured', !project.featured)}
-                    style={{ width: 40, height: 22, borderRadius: 11, border: 'none', cursor: 'pointer', transition: 'background 0.2s', background: project.featured ? 'var(--accent)' : 'var(--border)', position: 'relative' }}>
+                    style={{ width: 40, height: 22, borderRadius: 11, border: 'none', cursor: 'pointer', transition: 'background 0.2s', background: project.featured ? 'var(--accent)' : 'var(--border)', position: 'relative', flexShrink: 0 }}>
                     <span style={{ position: 'absolute', top: 3, left: project.featured ? 21 : 3, width: 16, height: 16, borderRadius: '50%', background: '#fff', transition: 'left 0.2s' }} />
                   </button>
                 </div>
@@ -365,14 +420,20 @@ export default function AdminProjectDetail() {
             {/* Related Services */}
             <div className="ds-panel">
               <div className="ds-panel-header">
-                <div><div className="ds-panel-title">Related Services</div><div className="ds-panel-desc">Services offered for this project</div></div>
+                <div>
+                  <div className="ds-panel-title">Related Services</div>
+                  <div className="ds-panel-desc">Services offered for this project</div>
+                </div>
               </div>
-              <div style={{ padding: '12px 22px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div className="proj-services-body">
                 {services.map(s => (
                   <label key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 13, color: 'var(--text)' }}>
-                    <input type="checkbox" checked={projectServices.includes(s.id)}
+                    <input
+                      type="checkbox"
+                      checked={projectServices.includes(s.id)}
                       onChange={e => setProjectServices(e.target.checked ? [...projectServices, s.id] : projectServices.filter(x => x !== s.id))}
-                      style={{ accentColor: 'var(--accent)', width: 14, height: 14 }} />
+                      style={{ accentColor: 'var(--accent)', width: 14, height: 14 }}
+                    />
                     {s.title}
                   </label>
                 ))}
@@ -382,9 +443,12 @@ export default function AdminProjectDetail() {
             {/* Preview */}
             <div className="ds-panel">
               <div className="ds-panel-header">
-                <div><div className="ds-panel-title">Preview</div><div className="ds-panel-desc">How this project will appear</div></div>
+                <div>
+                  <div className="ds-panel-title">Preview</div>
+                  <div className="ds-panel-desc">How this project will appear</div>
+                </div>
               </div>
-              <div style={{ padding: '16px 22px' }}>
+              <div className="proj-preview-body">
                 <div style={{ borderRadius: 10, padding: 14, background: 'var(--bg-3)', border: '1px solid var(--border)' }}>
                   <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>{project.title || 'Project Title'}</div>
                   <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 8, fontFamily: 'DM Mono, monospace' }}>
