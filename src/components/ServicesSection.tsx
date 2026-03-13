@@ -1,12 +1,13 @@
 import { Settings, Monitor, BarChart3, HardHat, Globe, Wrench, ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const services = [
-  { icon: Settings, title: "Project Management", description: "Strategic oversight and coordination for complex engineering initiatives." },
-  { icon: HardHat, title: "Construction Management", description: "Field supervision ensuring safety, efficiency, and execution quality." },
-  { icon: Monitor, title: "IT Solutions", description: "Technology infrastructure supporting modern engineering operations." },
-  { icon: BarChart3, title: "Project Controls", description: "Performance monitoring, cost management, and project forecasting." },
-  { icon: Globe, title: "GIS Services", description: "Spatial data analysis supporting infrastructure planning and delivery." },
-  { icon: Wrench, title: "Utility Engineering", description: "Design and modernization of essential public infrastructure systems." },
+  { icon: Settings, title: "Project Management", description: "Strategic oversight and coordination for complex engineering initiatives.", slug: "program-management" },
+  { icon: HardHat, title: "Construction Management", description: "Field supervision ensuring safety, efficiency, and execution quality.", slug: "construction-management" },
+  { icon: Monitor, title: "IT Solutions", description: "Technology infrastructure supporting modern engineering operations.", slug: "it-solutions" },
+  { icon: BarChart3, title: "Project Controls", description: "Performance monitoring, cost management, and project forecasting.", slug: "project-controls" },
+  { icon: Globe, title: "GIS Services", description: "Spatial data analysis supporting infrastructure planning and delivery.", slug: "geospatial-technologies" },
+  { icon: Wrench, title: "Utility Engineering", description: "Design and modernization of essential public infrastructure systems.", slug: "utility-engineering" },
 ];
 
 const BRAND = "#190ab0";
@@ -29,9 +30,10 @@ const ServicesSection = () => {
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
-              <div
+              <Link
                 key={index}
-                className="group flex flex-col gap-4 p-8 border-r border-b border-neutral-200 bg-white hover:bg-neutral-50 transition-colors duration-200 cursor-pointer"
+                to={`/services/${service.slug}`}
+                className="group flex flex-col gap-4 p-8 border-r border-b border-neutral-200 bg-white hover:bg-neutral-50 transition-colors duration-200 cursor-pointer no-underline"
               >
                 {/* Icon */}
                 <div
@@ -62,7 +64,7 @@ const ServicesSection = () => {
                     style={{ color: `group-hover:${BRAND}` }}
                   />
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

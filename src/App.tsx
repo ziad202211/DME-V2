@@ -22,8 +22,6 @@ import AdminContact from "./pages/admin/Contact";
 import AdminFooter from "./pages/admin/Footer";
 import AdminServiceDetail from "./pages/admin/ServiceDetail";
 import AdminProjectDetail from "./pages/admin/ProjectDetail";
-import ITSolutions from "./pages/ITSolutions";
-import ProjectControls from "./pages/ProjectControls";
 
 const queryClient = new QueryClient();
 

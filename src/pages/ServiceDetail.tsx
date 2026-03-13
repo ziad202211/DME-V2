@@ -153,23 +153,14 @@ export default function ServiceDetail() {
                   </Link>
                 ))}
               </div>
-              <div className="mt-4">
-                <Link
-                  to="/projects"
-                  className="text-[0.72rem] font-medium tracking-[0.18em] uppercase text-[#190ab0] hover:opacity-60 transition-opacity no-underline"
-                >
-                  View All Projects →
-                </Link>
-              </div>
+            
             </div>
           )}
-
-          <div className="mt-10 h-px bg-slate-200 w-16" />
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-12 px-6">
+      <section className="py-8 px-6">
         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-t border-slate-200 pt-12">
           <div>
             <p className="text-sm font-semibold text-slate-900 mb-1">Ready to talk?</p>
