@@ -12,12 +12,6 @@ import Projects from "./pages/Projects";
 import Services from "./pages/Services";
 import ServiceDetail from "./pages/ServiceDetail";
 import NotFound from "./pages/NotFound";
-import ProgramManagement from "./pages/ProgramManagement";
-import ConstructionManagement from "./pages/ConstructionManagement";
-import ITSolutions from "./pages/ITSolutions";
-import ProjectControls from "./pages/ProjectControls";
-import GeospatialTechnologies from "./pages/GeospatialTechnologies";
-import UtilityEngineering from "./pages/UtilityEngineering";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminProjects from "./pages/admin/Projects";
@@ -28,6 +22,8 @@ import AdminContact from "./pages/admin/Contact";
 import AdminFooter from "./pages/admin/Footer";
 import AdminServiceDetail from "./pages/admin/ServiceDetail";
 import AdminProjectDetail from "./pages/admin/ProjectDetail";
+import ITSolutions from "./pages/ITSolutions";
+import ProjectControls from "./pages/ProjectControls";
 
 const queryClient = new QueryClient();
 
@@ -46,12 +42,6 @@ const App = () => (
           <Route path="/projects/:slug" element={<ProjectDetail />} />
           <Route path="/services" element={<Services />} />
           <Route path="/services/:slug" element={<ServiceDetail />} />
-          <Route path="/services/program-management" element={<ProgramManagement />} />
-          <Route path="/services/construction-management" element={<ConstructionManagement />} />
-          <Route path="/services/it-solutions" element={<ITSolutions />} />
-          <Route path="/services/project-controls" element={<ProjectControls />} />
-          <Route path="/services/geospatial-technologies" element={<GeospatialTechnologies />} />
-          <Route path="/services/utility-engineering" element={<UtilityEngineering />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/projects" element={<AdminProjects />} />

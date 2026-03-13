@@ -92,11 +92,11 @@ export default function Services() {
       {/* Header */}
        <div className="relative w-full h-screen">
   <img 
-    src="/ant-rozetsky-HXOllTSwrpM-unsplash.jpg" 
+    src="/maranda-vandergriff-7aakZdIl4vg-unsplash.jpg" 
     alt="Projects Background" 
     className="absolute inset-0 w-full h-full object-cover"
   />
-  <div className="absolute inset-0 bg-black/50 "></div>
+  <div className="absolute inset-0 bg-black/70 "></div>
   <div className="relative z-10 container mx-auto px-6 h-full flex flex-col justify-center items-left">
     <h1 className="text-4xl font-bold text-[#190ab0] mb-4">Services</h1>
     
