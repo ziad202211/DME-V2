@@ -112,7 +112,7 @@ const AdvancedStratigies = () => {
 
       {/* Stats — full bleed white bar */}
       <div className="bg-white mt-0">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 grid grid-cols-2 sm:grid-cols-4 divide-x divide-neutral-200 py-8 sm:py-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 grid grid-cols-2 sm:grid-cols-4 sm:divide-x divide-neutral-200 py-8 sm:py-10">
           {stats.map((s, i) => (
             <div key={i} className="flex flex-col items-center gap-2 px-2 sm:px-4 first:pl-0 last:pr-0">
               <p className="text-[8px] sm:text-[10px] font-bold uppercase tracking-widest text-neutral-400 text-center">

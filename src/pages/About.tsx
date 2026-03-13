@@ -108,7 +108,7 @@ const About = () => {
               <div className="p-3 bg-[#190ab0]/10 rounded-lg ">
                 <Users className="text-[#190ab0]" size={24} />
               </div>
-              <div>
+              <div className="mb-6">
                 <h3 className="text-2xl font-bold mb-2">Our Professional Team</h3>
 
                 <p className="text-lg text-muted-foreground leading-relaxed">
