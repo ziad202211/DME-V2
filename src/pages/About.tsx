@@ -100,7 +100,7 @@ const About = () => {
       </section>
 
       {/* VALUES + STATS */}
-      <section className="py-20">
+      <section className="py-18">
         <div className="container mx-auto px-10 grid md:grid-cols-2 gap-10 items-center">
 
           <div className="space-y-8">
@@ -141,7 +141,7 @@ const About = () => {
       </section>
 
       {/* TEAM */}
-      <section className="py-24">
+      <section className="py-20">
         <div className="container mx-auto px-6">
 
           <h2 className="text-4xl font-bold text-center mb-16">
