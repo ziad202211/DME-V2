@@ -533,9 +533,33 @@ export default function AdminAbout() {
   const handleHeaderPhotoSave = async () => {
     setSaving(true);
     try {
-      const { error } = await supabase.from('about_settings').upsert({ key: 'header_photo_url', value: headerPhoto });
-      if (error) throw error;
-    } catch (e) { alert('Failed to save header photo'); }
+      // Find existing setting record
+      const existingSetting = settings.find(s => s.key === 'header_photo_url');
+      
+      if (existingSetting) {
+        // Update existing record
+        const { error } = await supabase
+          .from('about_settings')
+          .update({ value: headerPhoto, updated_at: new Date().toISOString() })
+          .eq('id', existingSetting.id);
+        if (error) throw error;
+      } else {
+        // Insert new record
+        const { error } = await supabase
+          .from('about_settings')
+          .insert({ key: 'header_photo_url', value: headerPhoto });
+        if (error) throw error;
+      }
+      
+      // Refresh settings to get updated data
+      const { data: updatedSettings } = await supabase.from('about_settings').select('*');
+      if (updatedSettings) {
+        setSettings(updatedSettings);
+      }
+    } catch (e) { 
+      console.error('Error saving header photo:', e);
+      alert('Failed to save header photo'); 
+    }
     finally { setSaving(false); }
   };
 

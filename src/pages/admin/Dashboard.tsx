@@ -335,7 +335,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState({ projects: 0, services: 0 });
   const [recentMessages, setRecentMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'actions' | 'overview'>('actions');
+  const [activeTab, setActiveTab] = useState<'actions'>('actions');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -484,38 +484,12 @@ export default function AdminDashboard() {
 
             {/* Tabs */}
             <div className="adm-tabs">
-              {(['actions', 'overview'] as const).map(t => (
+              {(['actions'] as const).map(t => (
                 <button key={t} className={`adm-tab ${activeTab === t ? 'active' : ''}`} onClick={() => setActiveTab(t)}>
                   {t.charAt(0).toUpperCase() + t.slice(1)}
                 </button>
               ))}
             </div>
-
-            {/* Tab: Overview */}
-            {activeTab === 'overview' && (
-              <div className="adm-grid2">
-                <div className="adm-panel">
-                  <div className="adm-panel-header">
-                    <div>
-                      <div className="adm-panel-title">Quick Navigation</div>
-                      <div className="adm-panel-sub">Jump to any section</div>
-                    </div>
-                    <Zap size={14} style={{ color: 'var(--accent)' }} />
-                  </div>
-                  <div className="adm-quick-grid">
-                    {[
-                      { icon: <FolderOpen size={14} />, label: 'Projects', path: '/admin/projects' },
-                      { icon: <FileText size={14} />, label: 'Services', path: '/admin/services' },
-                      { icon: <Settings size={14} />, label: 'Settings', path: '/admin/settings' },
-                    ].map(b => (
-                      <button key={b.path} className="adm-quick-btn" onClick={() => navigate(b.path)}>
-                        {b.icon}{b.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Tab: Actions */}
             {activeTab === 'actions' && (

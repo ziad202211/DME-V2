@@ -85,36 +85,29 @@ export default function Services() {
       </div>
     );
   }
-
+// We offer comprehensive engineering and project management solutions tailored to meet the unique needs of each client and project.
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Services</h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We offer comprehensive engineering and project management solutions tailored to meet 
-              the unique needs of each client and project.
-            </p>
-          </div>
-        </div>
-      </div>
+       <div className="relative w-full h-screen">
+  <img 
+    src="/ant-rozetsky-HXOllTSwrpM-unsplash.jpg" 
+    alt="Projects Background" 
+    className="absolute inset-0 w-full h-full object-cover"
+  />
+  <div className="absolute inset-0 bg-black/50 "></div>
+  <div className="relative z-10 container mx-auto px-6 h-full flex flex-col justify-center items-left">
+    <h1 className="text-4xl font-bold text-[#190ab0] mb-4">Services</h1>
+    
+    <p className="text-gray-200 max-w-xl ">
+We offer comprehensive engineering and project management solutions tailored to meet the unique needs of each client and project.
+    </p>
+  </div>
+</div>
 
       {/* Search */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="max-w-md mx-auto mb-8">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search services..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </div>
 
         {/* Featured Services */}
         {filteredServices.filter(service => service.featured).length > 0 && (
@@ -159,7 +152,7 @@ export default function Services() {
   {filteredServices.map((service, index) => (
     <div
       key={service.id}
-      className={`grid lg:grid-cols-2 gap-12 items-center ${
+      className={`grid lg:grid-cols-2 gap-16 items-center ${
         index % 2 === 1 ? "lg:flex-row-reverse" : ""
       }`}
     >
@@ -178,9 +171,7 @@ export default function Services() {
       {/* Content */}
       <div className="space-y-5">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-blue-100 text-blue-700 rounded-lg">
-            {getServiceIcon(service.icon)}
-          </div>
+          
 
           {service.featured && (
             <Badge className="bg-blue-600">
@@ -199,7 +190,7 @@ export default function Services() {
         </p>
 
         <Link to={`/services/${service.slug}`}>
-          <Button className="mt-3">
+          <Button className="mt-3 bg-[#190ab0] hover:bg-[#190ab0]/90 text-white">
             Learn More
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>

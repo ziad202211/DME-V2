@@ -65,7 +65,7 @@ const About = () => {
       {/* HERO */}
 <section className="relative h-screen w-full">
   <img
-    src='/lisa-adminis-F6wSkISfvEg-unsplash.jpg'
+    src={headerPhoto}
     className="absolute w-full h-full object-cover"
     alt="Header"
   />

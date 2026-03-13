@@ -85,7 +85,7 @@ const HeroSection = () => {
             </p>
           )}
 
-          <h1 className="mt-4 font-heading text-5xl md:text-5xl lg:text-5xl font-bold text-primary-foreground leading-relaxed">
+          <h1 className="mt-4 font-heading text-4xl md:text-5xl lg:text-5xl font-bold text-primary-foreground leading-tight">
             {content.hero_title}
           </h1>
 
