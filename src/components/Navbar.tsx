@@ -126,6 +126,16 @@ const Navbar = () => {
               )
             )}
           </div>
+          {/* Contact Us button for mobile */}
+          <div className="ml-1 mb-3 border-t border-gray-200/50">
+            <Link
+              to="/contact"
+              onClick={() => setOpen(false)}
+              className="px-4 py-2 text-sm font-semibold text-center text-white bg-[#190ab0] rounded-full hover:bg-[#150d8d]"
+            >
+              CONTACT US
+            </Link>
+          </div>
         </div>
       )}
     </nav>
