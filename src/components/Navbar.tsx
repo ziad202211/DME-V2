@@ -127,7 +127,7 @@ const Navbar = () => {
             )}
           </div>
           {/* Contact Us button for mobile */}
-          <div className="ml-1 mb-3 border-t border-gray-200/50">
+          <div className="ml-1 mb-3">
             <Link
               to="/contact"
               onClick={() => setOpen(false)}
